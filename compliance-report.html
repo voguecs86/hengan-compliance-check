@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>衡安AI合规通 - 合规报告PDF生成器 | Pro版</title>
+<meta name="description" content="5分钟生成符合EU AI Act第50条要求的合规报告PDF，零成本、零服务器、零依赖。">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  color: #2c3e50;
+  line-height: 1.6;
+}
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+header {
+  background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+  color: white;
+  padding: 30px 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+header h1 { font-size: 28px; margin-bottom: 8px; }
+header .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 12px; }
+header .badge {
+  display: inline-block;
+  background: #e74c3c;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.countdown-banner {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.3);
+}
+.progress-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.progress-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+  padding: 8px;
+  font-size: 14px;
+  color: #95a5a6;
+  font-weight: 500;
+}
+.progress-step.active { color: #2c3e50; font-weight: bold; }
+.progress-step::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  background: #ecf0f1;
+  border-radius: 50%;
+  border: 3px solid #bdc3c7;
+}
+.progress-step.active::before {
+  background: #2c3e50;
+  border-color: #2c3e50;
+}
+.form-section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.form-section h2 {
+  color: #2c3e50;
+  font-size: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #ecf0f1;
+}
+.form-row { margin-bottom: 18px; }
+.form-row label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #34495e;
+  font-size: 14px;
+}
+.form-row label .required { color: #e74c3c; }
+.form-row input,
+.form-row select,
+.form-row textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
+  outline: none;
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 3px rgba(44,62,80,0.1);
+}
+.form-row textarea { min-height: 80px; resize: vertical; }
+.form-row .hint { font-size: 12px; color: #7f8c8d; margin-top: 4px; }
+.checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 2px solid #ecf0f1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+.checkbox-item:hover { border-color: #3498db; background: #f8f9fa; }
+.checkbox-item input { margin-right: 10px; }
+.checkbox-item.checked {
+  background: #e8f5e9;
+  border-color: #27ae60;
+  color: #2c3e50;
+  font-weight: 500;
+}
+.btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+  color: white;
+  flex: 1;
+  min-width: 200px;
+  justify-content: center;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(44,62,80,0.3); }
+.btn-secondary { background: #ecf0f1; color: #2c3e50; }
+.btn-secondary:hover { background: #bdc3c7; }
+.btn-success { background: #27ae60; color: white; }
+.btn-success:hover { background: #229954; }
+.btn-danger { background: #e74c3c; color: white; }
+.btn-danger:hover { background: #c0392b; }
+
+/* 预览区 */
+.preview-section {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  display: none;
+}
+.preview-section.show { display: block; }
+.report-page {
+  background: white;
+  padding: 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  page-break-after: always;
+  min-height: 800px;
+}
+.report-cover {
+  text-align: center;
+  background: linear-gradient(135deg, #2c3e50 0%, #4a6741 100%);
+  color: white;
+  padding: 80px 40px;
+  border-radius: 8px;
+}
+.report-cover h1 { font-size: 32px; margin-bottom: 16px; }
+.report-cover .meta { margin-top: 40px; font-size: 16px; line-height: 2; }
+.report-section h2 {
+  color: #2c3e50;
+  font-size: 22px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2c3e50;
+}
+.report-section h3 { color: #34495e; font-size: 17px; margin: 18px 0 10px; }
+.report-section table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+.report-section th,
+.report-section td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+.report-section th { background: #f8f9fa; font-weight: 600; }
+.risk-badge {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 10px 0;
+}
+.risk-low { background: #d4edda; color: #155724; }
+.risk-medium { background: #fff3cd; color: #856404; }
+.risk-high { background: #f8d7da; color: #721c24; }
+.status-applicable { color: #27ae60; font-weight: bold; }
+.status-na { color: #95a5a6; }
+.history-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #ecf0f1;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.history-item:hover { background: #f8f9fa; }
+.history-actions { display: flex; gap: 6px; }
+.history-actions button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.alert-info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+.alert-warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+.alert-danger { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+.alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+footer {
+  text-align: center;
+  padding: 30px 20px;
+  color: #7f8c8d;
+  font-size: 13px;
+}
+footer a { color: #2c3e50; text-decoration: none; font-weight: 600; }
+
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  header h1 { font-size: 22px; }
+  .form-section, .preview-section, .history-section { padding: 18px; }
+  .progress-bar { flex-direction: column; gap: 10px; }
+  .progress-step::before { display: none; }
+  .checkbox-group { grid-template-columns: 1fr; }
+  .btn-group { flex-direction: column; }
+  .btn { width: 100%; }
+  .report-page { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>衡安AI合规通 - 合规报告PDF生成器</h1>
+  <div class="subtitle">EU AI Act 第50条合规评估 · 5分钟生成专业报告</div>
+  <span class="badge">PRO版</span>
+</header>
+
+<div class="countdown-banner" id="countdown">
+  EU AI Act 全面执法倒计时：<strong id="countdown-days">--</strong> 天
+  <span style="margin-left:12px; font-size:13px;">(2026年8月2日生效)</span>
+</div>
+
+<div class="alert alert-info">
+  <strong>使用说明：</strong>填写下方表单 → 自动评估风险等级 → 预览报告 → 一键导出PDF。所有数据本地保存，不上传服务器。
+</div>
+
+<!-- 进度条 -->
+<div class="progress-bar">
+  <div class="progress-step active" data-step="1">1. 填写表单</div>
+  <div class="progress-step" data-step="2">2. 风险评估</div>
+  <div class="progress-step" data-step="3">3. 预览报告</div>
+  <div class="progress-step" data-step="4">4. 导出PDF</div>
+</div>
+
+<!-- 表单区 -->
+<form id="compliance-form">
+  <!-- 步骤1: 填写表单 -->
+  <div class="form-section" id="form-step-1">
+    <h2>一、企业基本信息</h2>
+    <div class="form-row">
+      <label>公司名称 <span class="required">*</span></label>
+      <input type="text" name="companyName" required placeholder="例: 衡安科技有限公司">
+    </div>
+    <div class="form-row">
+      <label>统一社会信用代码 / 注册号</label>
+      <input type="text" name="companyId" placeholder="选填，用于报告留档">
+    </div>
+    <div class="form-row">
+      <label>联系人 <span class="required">*</span></label>
+      <input type="text" name="contactName" required placeholder="合规负责人姓名">
+    </div>
+    <div class="form-row">
+      <label>联系人邮箱 <span class="required">*</span></label>
+      <input type="email" name="contactEmail" required placeholder="compliance@example.com">
+    </div>
+    <div class="form-row">
+      <label>公司注册地</label>
+      <select name="companyRegion">
+        <option value="cn">中国</option>
+        <option value="eu">欧盟成员国</option>
+        <option value="us">美国</option>
+        <option value="uk">英国</option>
+        <option value="other">其他</option>
+      </select>
+      <div class="hint">如果公司在欧盟且AI系统部署在欧盟市场，必须遵守EU AI Act</div>
+    </div>
+  </div>
+
+  <div class="form-section" id="form-step-2">
+    <h2>二、AI系统信息</h2>
+    <div class="form-row">
+      <label>AI系统名称 <span class="required">*</span></label>
+      <input type="text" name="aiSystemName" required placeholder="例: 智能客服小助手V2.0">
+    </div>
+    <div class="form-row">
+      <label>AI系统类型 <span class="required">*</span></label>
+      <select name="aiType" required>
+        <option value="chatbot">Chatbot / 对话AI</option>
+        <option value="ai-generated">AI生成内容(图像/视频/文本)</option>
+        <option value="ai-enhanced">AI增强内容(编辑/修复/上色)</option>
+        <option value="recommendation">AI推荐系统</option>
+        <option value="emotion">情绪识别 / 生物分类</option>
+        <option value="deepfake">Deepfake / 合成媒体</option>
+        <option value="biometric">生物识别(人脸/指纹)</option>
+        <option value="scoring">社会评分</option>
+        <option value="other">其他</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>部署范围 <span class="required">*</span></label>
+      <select name="deploymentScope" required>
+        <option value="internal">纯内部使用</option>
+        <option value="b2b">B2B SaaS（仅企业客户）</option>
+        <option value="b2c">B2C（消费者产品）</option>
+        <option value="public">公开网站/应用</option>
+        <option value="public-affairs">公共事务相关</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>目标用户群体</label>
+      <input type="text" name="targetUsers" placeholder="例: 25-40岁职场女性">
+    </div>
+    <div class="form-row">
+      <label>是否对未成年人开放？</label>
+      <select name="minorAccess">
+        <option value="no">否</option>
+        <option value="yes">是</option>
+        <option value="unknown">不确定</option>
+      </select>
+      <div class="hint">EU AI Act对未成年人有额外保护要求</div>
+    </div>
+  </div>
+
+  <div class="form-section" id="form-step-3">
+    <h2>三、数据与训练</h2>
+    <div class="form-row">
+      <label>数据来源（可多选）</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="user-input"> 用户输入
+        </label>
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="public-data"> 公开数据
+        </label>
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="licensed"> 付费授权数据
+        </label>
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="user-generated"> 用户生成内容(UGC)
+        </label>
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="ai-generated"> AI生成数据
+        </label>
+        <label class="checkbox-item" data-name="dataSource">
+          <input type="checkbox" value="personal"> 包含个人数据
+        </label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>训练数据是否使用了版权材料？</label>
+      <select name="copyrightedData">
+        <option value="no">否</option>
+        <option value="yes-opted-out">是，已遵守 opt-out 协议</option>
+        <option value="yes-unclear">是，未明确遵守</option>
+        <option value="unknown">不确定</option>
+      </select>
+      <div class="hint">EU AI Act要求GPAI模型需公开训练数据摘要</div>
+    </div>
+  </div>
+
+  <div class="form-section" id="form-step-4">
+    <h2>四、透明度措施（已实施的可多选）</h2>
+    <div class="alert alert-warning">
+      <strong>必读：</strong>EU AI Act第50条要求AI系统对用户透明。下列措施如已实施请勾选，将作为合规证据写入报告。
+    </div>
+    <div class="form-row">
+      <label>已实施的透明度措施</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="chatbot-notice"> Chatbot交互告知（明确告知在与AI交流）
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="content-marking"> AI生成内容标记（可机器读取水印/C2PA）
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="emotion-notice"> 情绪识别告知
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="deepfake-disclosure"> Deepfake披露
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="user-consent"> 用户知情同意
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="data-policy"> 隐私政策声明
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="human-review"> 人工审核机制
+        </label>
+        <label class="checkbox-item" data-name="transparency">
+          <input type="checkbox" value="complaint-channel"> 用户申诉渠道
+        </label>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>其他已实施的合规措施</label>
+      <textarea name="otherMeasures" placeholder="例: 已建立AI伦理委员会、季度审计、员工合规培训等"></textarea>
+    </div>
+  </div>
+
+  <div class="form-section" id="form-step-5">
+    <h2>五、附加信息（选填）</h2>
+    <div class="form-row">
+      <label>系统URL / 产品链接</label>
+      <input type="text" name="systemUrl" placeholder="https://...">
+    </div>
+    <div class="form-row">
+      <label>系统上线时间</label>
+      <input type="date" name="launchDate">
+    </div>
+    <div class="form-row">
+      <label>月活用户数（估算）</label>
+      <select name="mau">
+        <option value="lt-100">&lt; 100</option>
+        <option value="100-1000">100 - 1,000</option>
+        <option value="1k-10k">1,000 - 10,000</option>
+        <option value="10k-100k">10,000 - 100,000</option>
+        <option value="100k-1m">100,000 - 1,000,000</option>
+        <option value="gt-1m">&gt; 1,000,000</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" onclick="generateReport()">生成评估报告</button>
+      <button type="button" class="btn btn-secondary" onclick="resetForm()">清空表单</button>
+    </div>
+  </div>
+</form>
+
+<!-- 报告预览 -->
+<div class="preview-section" id="report-preview">
+  <h2 style="margin-bottom: 20px;">报告预览</h2>
+  
+  <div class="alert" id="risk-alert"></div>
+  
+  <div id="report-content">
+    <!-- 封面 -->
+    <div class="report-page" id="page-cover">
+      <div class="report-cover">
+        <h1>EU AI Act 合规评估报告</h1>
+        <p style="font-size: 18px; margin: 20px 0;">基于第50条透明度义务</p>
+        <div class="meta" id="cover-meta"></div>
+      </div>
+    </div>
+    
+    <!-- 基本信息 -->
+    <div class="report-page report-section" id="page-basic">
+      <h2>一、企业与系统基本信息</h2>
+      <table id="basic-table"></table>
+    </div>
+    
+    <!-- 风险评级 -->
+    <div class="report-page report-section" id="page-risk">
+      <h2>二、风险评级</h2>
+      <div id="risk-content"></div>
+    </div>
+    
+    <!-- Article 50对照 -->
+    <div class="report-page report-section" id="page-article50">
+      <h2>三、EU AI Act 第50条 逐条对照</h2>
+      <div id="article50-content"></div>
+    </div>
+    
+    <!-- 透明度措施 -->
+    <div class="report-page report-section" id="page-transparency">
+      <h2>四、透明度措施清单</h2>
+      <div id="transparency-content"></div>
+    </div>
+    
+    <!-- 合规建议 -->
+    <div class="report-page report-section" id="page-recommendations">
+      <h2>五、合规建议与行动清单</h2>
+      <div id="recommendations-content"></div>
+    </div>
+    
+    <!-- 声明 -->
+    <div class="report-page report-section" id="page-declaration">
+      <h2>六、声明</h2>
+      <p>本报告由衡安AI合规通自动生成，基于用户提交的信息进行评估。报告内容仅供参考，不构成法律意见。最终合规性需由具有资质的法律专业人士确认。</p>
+      <div style="margin-top: 40px;">
+        <p>报告生成人: _______________</p>
+        <p>日期: _______________</p>
+        <p>签字: _______________</p>
+      </div>
+      <hr style="margin: 30px 0; border: 1px solid #ddd;">
+      <p style="text-align: center; color: #7f8c8d; font-size: 12px;">
+        衡安AI合规通 · 衡安AI · 让AI赋能合规无忧
+      </p>
+    </div>
+  </div>
+  
+  <div class="btn-group">
+    <button type="button" class="btn btn-success" onclick="downloadPDF()">下载PDF</button>
+    <button type="button" class="btn btn-secondary" onclick="window.print()">打印</button>
+    <button type="button" class="btn btn-secondary" onclick="saveDraft()">保存草稿</button>
+    <button type="button" class="btn btn-secondary" onclick="hidePreview()">返回编辑</button>
+  </div>
+</div>
+
+<!-- 报告历史 -->
+<div class="history-section" id="history-section">
+  <h2 style="margin-bottom: 16px;">历史报告</h2>
+  <div id="history-list"></div>
+</div>
+
+<footer>
+  <p>衡安AI合规通 · 衡安AI · <a href="index.html">Lite版</a> · <a href="pro.html">Pro版</a> · <a href="README.md">说明文档</a></p>
+  <p style="margin-top: 8px;">EU AI Act倒计时 · 零成本合规工具 · 本地运行·数据不上传</p>
+  <p style="margin-top: 8px; font-size: 12px;">本工具不构成法律意见。最终合规性请咨询法律专业人士。</p>
+</footer>
+
+</div>
+
+<script>
+// 倒计时
+function updateCountdown() {
+  const target = new Date('2026-08-02T00:00:00');
+  const now = new Date();
+  const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+  document.getElementById('countdown-days').textContent = diff;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000 * 60 * 60);
+
+// 复选框交互
+document.querySelectorAll('.checkbox-item input').forEach(cb => {
+  cb.addEventListener('change', e => {
+    e.target.parentElement.classList.toggle('checked', e.target.checked);
+  });
+});
+
+// 数据收集
+function collectFormData() {
+  const form = document.getElementById('compliance-form');
+  const formData = new FormData(form);
+  const data = {};
+  for (let [key, value] of formData.entries()) data[key] = value;
+  
+  // 多选checkbox
+  data.dataSource = Array.from(document.querySelectorAll('input[name="dataSource"]:checked')).map(cb => cb.value);
+  data.transparency = Array.from(document.querySelectorAll('input[name="transparency"]:checked')).map(cb => cb.value);
+  
+  return data;
+}
+
+// 风险评级
+function assessRisk(data) {
+  let score = 0;
+  const reasons = [];
+  
+  // 高风险因素
+  if (data.aiType === 'deepfake') {
+    score += 30;
+    reasons.push('Deepfake系统属于EU AI Act高风险类别');
+  }
+  if (data.aiType === 'biometric') {
+    score += 25;
+    reasons.push('生物识别系统受严格监管');
+  }
+  if (data.aiType === 'scoring') {
+    score += 35;
+    reasons.push('社会评分系统被EU AI Act禁止');
+  }
+  if (data.aiType === 'emotion' && (data.deploymentScope === 'public' || data.deploymentScope === 'public-affairs')) {
+    score += 20;
+    reasons.push('公共场景的情绪识别需特殊告知');
+  }
+  if (data.deploymentScope === 'public-affairs') {
+    score += 20;
+    reasons.push('公共事务相关AI需遵守第50条第4款');
+  }
+  
+  // 中风险因素
+  if (data.aiType === 'chatbot' && data.deploymentScope !== 'internal') {
+    score += 10;
+    reasons.push('对外Chatbot需交互告知');
+  }
+  if (data.aiType === 'ai-generated' && data.deploymentScope !== 'internal') {
+    score += 15;
+    reasons.push('对外发布的AI生成内容需内容标记');
+  }
+  if (data.minorAccess === 'yes') {
+    score += 10;
+    reasons.push('面向未成年人需额外保护');
+  }
+  if (data.copyrightedData === 'yes-unclear') {
+    score += 10;
+    reasons.push('训练数据版权状态不清晰存在风险');
+  }
+  
+  // 低风险（减分）
+  if (data.deploymentScope === 'internal' && data.transparency.length >= 4) {
+    score -= 10;
+    reasons.push('纯内部使用且透明度充分，风险降低');
+  }
+  if (data.transparency.includes('content-marking') && data.aiType === 'ai-generated') {
+    score -= 5;
+    reasons.push('已实施内容标记，部分合规');
+  }
+  
+  score = Math.max(0, score);
+  
+  let level, levelClass, levelText;
+  if (score < 15) { level = 'low'; levelClass = 'risk-low'; levelText = '低风险'; }
+  else if (score < 35) { level = 'medium'; levelClass = 'risk-medium'; levelText = '中风险'; }
+  else { level = 'high'; levelClass = 'risk-high'; levelText = '高风险'; }
+  
+  return { score, level, levelClass, levelText, reasons };
+}
+
+// Article 50 逐条对照
+function checkArticle50(data) {
+  const articles = [
+    {
+      id: 'art-50-1',
+      title: '第50条第1款 - 提供者与部署者义务',
+      summary: '在与自然人交互时，提供者和部署者应确保自然人被告知其正在与AI系统交互（除非人类审查是显而易见的或情境明确）。',
+      applicable: data.aiType === 'chatbot' || data.aiType === 'recommendation' || data.aiType === 'emotion' || data.aiType === 'biometric',
+      compliant: data.transparency.includes('chatbot-notice'),
+      suggestion: '在AI系统首次交互时显示明确告知，例如"您正在与AI助手对话"'
+    },
+    {
+      id: 'art-50-2',
+      title: '第50条第2款 - 合成内容标记',
+      summary: 'AI系统生成的合成图像、音频、视频或文本内容，应以机器可读方式标记为人为操纵或生成。',
+      applicable: ['ai-generated', 'ai-enhanced', 'deepfake'].includes(data.aiType),
+      compliant: data.transparency.includes('content-marking'),
+      suggestion: '使用C2PA内容真实性标准嵌入元数据水印（衡安AI合规通提供签名工具）'
+    },
+    {
+      id: 'art-50-3',
+      title: '第50条第3款 - 情绪识别与生物分类',
+      summary: '部署情绪识别或生物分类系统的自然人应被告知系统运作及数据处理相关信息。',
+      applicable: data.aiType === 'emotion' || data.aiType === 'biometric',
+      compliant: data.transparency.includes('emotion-notice'),
+      suggestion: '在数据收集前显示明确的告知弹窗，记录用户同意'
+    },
+    {
+      id: 'art-50-4',
+      title: '第50条第4款 - Deepfake与公共事务',
+      summary: '部署deepfake系统的部署者应披露内容为人工生成或操纵。涉及公共利益的AI生成内容应披露AI生成属性。',
+      applicable: data.aiType === 'deepfake' || data.deploymentScope === 'public-affairs',
+      compliant: data.transparency.includes('deepfake-disclosure') || data.transparency.includes('content-marking'),
+      suggestion: '在deepfake内容上叠加"AI生成"水印，公共事务内容在显著位置标注AI来源'
+    }
+  ];
+  
+  return articles;
+}
+
+// 生成报告
+function generateReport() {
+  const data = collectFormData();
+  
+  // 验证必填
+  if (!data.companyName || !data.contactName || !data.contactEmail || !data.aiSystemName || !data.aiType || !data.deploymentScope) {
+    alert('请填写所有必填字段（带*号）');
+    return;
+  }
+  
+  // 风险评级
+  const risk = assessRisk(data);
+  const articles = checkArticle50(data);
+  
+  // 渲染封面
+  const reportId = 'HGR-' + Date.now().toString(36).toUpperCase();
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cover-meta').innerHTML = `
+    <p>报告编号: <strong>${reportId}</strong></p>
+    <p>公司: <strong>${escapeHtml(data.companyName)}</strong></p>
+    <p>AI系统: <strong>${escapeHtml(data.aiSystemName)}</strong></p>
+    <p>生成日期: <strong>${today}</strong></p>
+  `;
+  
+  // 风险提示
+  const alertEl = document.getElementById('risk-alert');
+  if (risk.level === 'high') {
+    alertEl.className = 'alert alert-danger';
+    alertEl.innerHTML = '<strong>高风险！</strong>该AI系统存在重大合规风险，建议立即咨询法律专业人士。';
+  } else if (risk.level === 'medium') {
+    alertEl.className = 'alert alert-warning';
+    alertEl.innerHTML = '<strong>中风险。</strong>该AI系统需要采取额外合规措施，建议在8月2日前完成。';
+  } else {
+    alertEl.className = 'alert alert-success';
+    alertEl.innerHTML = '<strong>低风险。</strong>该AI系统合规状况良好，建议持续关注监管动态。';
+  }
+  
+  // 基本信息表
+  const regionMap = {cn: '中国', eu: '欧盟', us: '美国', uk: '英国', other: '其他'};
+  const scopeMap = {internal: '纯内部使用', b2b: 'B2B SaaS', b2c: 'B2C', public: '公开网站/应用', 'public-affairs': '公共事务'};
+  const typeMap = {chatbot: 'Chatbot', 'ai-generated': 'AI生成内容', 'ai-enhanced': 'AI增强内容', recommendation: 'AI推荐', emotion: '情绪识别', deepfake: 'Deepfake', biometric: '生物识别', scoring: '社会评分', other: '其他'};
+  const sourceMap = {'user-input': '用户输入', 'public-data': '公开数据', licensed: '授权数据', 'user-generated': 'UGC', 'ai-generated': 'AI生成', personal: '个人数据'};
+  const minorMap = {no: '否', yes: '是', unknown: '不确定'};
+  const copyrightMap = {no: '否', 'yes-opted-out': '是，已遵守opt-out', 'yes-unclear': '是，未明确', unknown: '不确定'};
+  
+  document.getElementById('basic-table').innerHTML = `
+    <tr><th width="35%">公司名称</th><td>${escapeHtml(data.companyName)}</td></tr>
+    <tr><th>公司注册地</th><td>${regionMap[data.companyRegion] || data.companyRegion}</td></tr>
+    <tr><th>联系人</th><td>${escapeHtml(data.contactName)} (${escapeHtml(data.contactEmail)})</td></tr>
+    <tr><th>AI系统名称</th><td>${escapeHtml(data.aiSystemName)}</td></tr>
+    <tr><th>AI系统类型</th><td>${typeMap[data.aiType] || data.aiType}</td></tr>
+    <tr><th>部署范围</th><td>${scopeMap[data.deploymentScope] || data.deploymentScope}</td></tr>
+    <tr><th>目标用户</th><td>${escapeHtml(data.targetUsers) || '-'}</td></tr>
+    <tr><th>未成年人开放</th><td>${minorMap[data.minorAccess]}</td></tr>
+    <tr><th>数据来源</th><td>${data.dataSource.map(s => sourceMap[s] || s).join('、') || '-'}</td></tr>
+    <tr><th>训练数据版权</th><td>${copyrightMap[data.copyrightedData]}</td></tr>
+  `;
+  
+  // 风险内容
+  document.getElementById('risk-content').innerHTML = `
+    <div style="text-align: center; margin: 20px 0;">
+      <div class="risk-badge ${risk.levelClass}">${risk.levelText} (评分: ${risk.score})</div>
+    </div>
+    <h3>评级理由</h3>
+    <ul style="margin-left: 20px; line-height: 2;">
+      ${risk.reasons.map(r => '<li>' + escapeHtml(r) + '</li>').join('')}
+    </ul>
+    <h3>风险说明</h3>
+    <p>EU AI Act违规处罚最高可达3500万欧元或全球年营业额的7%（以较高者为准）。本评估基于提交信息，最终合规性需法律专业人士确认。</p>
+  `;
+  
+  // Article 50 对照
+  document.getElementById('article50-content').innerHTML = `
+    <table>
+      <tr><th width="20%">条款</th><th width="15%">是否适用</th><th width="15%">是否合规</th><th width="50%">合规建议</th></tr>
+      ${articles.map(a => `
+        <tr>
+          <td><strong>${escapeHtml(a.title)}</strong><br><span style="font-size:12px;color:#7f8c8d;">${escapeHtml(a.summary)}</span></td>
+          <td>${a.applicable ? '<span class="status-applicable">✓ 适用</span>' : '<span class="status-na">- 不适用</span>'}</td>
+          <td>${a.applicable ? (a.compliant ? '<span class="status-applicable">✓ 已合规</span>' : '<span style="color:#e74c3c;">✗ 待改进</span>') : '<span class="status-na">-</span>'}</td>
+          <td>${escapeHtml(a.suggestion)}</td>
+        </tr>
+      `).join('')}
+    </table>
+  `;
+  
+  // 透明度措施
+  const transparencyMap = {
+    'chatbot-notice': 'Chatbot交互告知',
+    'content-marking': 'AI生成内容标记',
+    'emotion-notice': '情绪识别告知',
+    'deepfake-disclosure': 'Deepfake披露',
+    'user-consent': '用户知情同意',
+    'data-policy': '隐私政策声明',
+    'human-review': '人工审核机制',
+    'complaint-channel': '用户申诉渠道'
+  };
+  document.getElementById('transparency-content').innerHTML = `
+    <h3>已实施的措施</h3>
+    <ul style="margin-left: 20px; line-height: 2;">
+      ${data.transparency.length ? data.transparency.map(t => '<li class="status-applicable">✓ ' + (transparencyMap[t] || t) + '</li>').join('') : '<li class="status-na">尚未实施任何透明度措施</li>'}
+    </ul>
+    <h3>其他合规措施</h3>
+    <p>${escapeHtml(data.otherMeasures) || '无'}</p>
+    <h3>建议补充的措施</h3>
+    <ul style="margin-left: 20px; line-height: 2;">
+      ${articles.filter(a => a.applicable && !a.compliant).map(a => '<li style="color:#e74c3c;">' + escapeHtml(a.suggestion) + '</li>').join('') || '<li class="status-applicable">所有适用条款均已合规</li>'}
+    </ul>
+  `;
+  
+  // 合规建议
+  const recs = [];
+  if (risk.level === 'high') {
+    recs.push('立即咨询EU AI Act专业法律顾问，制定合规计划');
+    recs.push('暂停高风险功能在欧盟市场的部署');
+    recs.push('建立内部AI伦理委员会与合规审计机制');
+  }
+  if (!data.transparency.includes('content-marking') && ['ai-generated', 'ai-enhanced', 'deepfake'].includes(data.aiType)) {
+    recs.push('部署C2PA内容真实性签名（衡安AI合规通Pro版提供签名工具）');
+  }
+  if (!data.transparency.includes('chatbot-notice') && data.aiType === 'chatbot') {
+    recs.push('在Chatbot首次交互时显示明确告知');
+  }
+  if (data.deploymentScope === 'public-affairs' && !data.transparency.includes('deepfake-disclosure')) {
+    recs.push('公共事务相关内容必须标注AI生成属性');
+  }
+  if (data.copyrightedData === 'yes-unclear') {
+    recs.push('整理训练数据来源，建立训练数据透明度报告');
+  }
+  if (data.minorAccess === 'yes') {
+    recs.push('建立未成年人保护机制，符合EU AI Act第28条');
+  }
+  recs.push('在2026年8月2日前完成所有适用合规措施');
+  recs.push('建立持续合规监测机制，每季度复审');
+  
+  document.getElementById('recommendations-content').innerHTML = `
+    <h3>立即行动清单</h3>
+    <ol style="margin-left: 20px; line-height: 2;">
+      ${recs.map(r => '<li>' + escapeHtml(r) + '</li>').join('')}
+    </ol>
+    <h3>时间表建议</h3>
+    <table>
+      <tr><th>时间</th><th>行动</th></tr>
+      <tr><td>立即</td><td>内部评估并启动合规流程</td></tr>
+      <tr><td>7月22日前</td><td>签署EU AI Act行为准则（如适用）</td></tr>
+      <tr><td>8月2日前</td><td>完成所有强制合规措施</td></tr>
+      <tr><td>8月2日后</td><td>持续监测与季度复审</td></tr>
+    </table>
+  `;
+  
+  // 显示预览
+  document.getElementById('report-preview').classList.add('show');
+  document.getElementById('report-preview').scrollIntoView({behavior: 'smooth'});
+  
+  // 更新进度
+  document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.progress-step')[2].classList.add('active');
+  
+  // 保存到历史
+  saveToHistory({id: reportId, data, risk, date: today});
+}
+
+// 转义HTML
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+// 下载PDF
+async function downloadPDF() {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '生成中...';
+  
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    const pages = ['page-cover', 'page-basic', 'page-risk', 'page-article50', 'page-transparency', 'page-recommendations', 'page-declaration'];
+    
+    for (let i = 0; i < pages.length; i++) {
+      const element = document.getElementById(pages[i]);
+      if (i > 0) doc.addPage();
+      const canvas = await html2canvas(element, {scale: 2, useCORS: true, backgroundColor: '#ffffff'});
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    }
+    
+    const filename = 'EU-AI-Act-合规报告-' + new Date().toISOString().split('T')[0] + '.pdf';
+    doc.save(filename);
+    
+    // 更新进度
+    document.querySelectorAll('.progress-step').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.progress-step')[3].classList.add('active');
+  } catch (err) {
+    alert('PDF生成失败: ' + err.message + '\n请尝试使用"打印"功能保存为PDF');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '下载PDF';
+  }
+}
+
+// 保存草稿
+function saveDraft() {
+  const data = collectFormData();
+  localStorage.setItem('compliance-draft', JSON.stringify(data));
+  alert('草稿已保存');
+}
+
+// 重置
+function resetForm() {
+  if (confirm('确定要清空所有表单数据吗？')) {
+    document.getElementById('compliance-form').reset();
+    document.querySelectorAll('.checkbox-item').forEach(c => c.classList.remove('checked'));
+    document.getElementById('report-preview').classList.remove('show');
+  }
+}
+
+// 隐藏预览
+function hidePreview() {
+  document.getElementById('report-preview').classList.remove('show');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// 历史记录
+function saveToHistory(entry) {
+  const history = JSON.parse(localStorage.getItem('compliance-history') || '[]');
+  history.unshift(entry);
+  // 保留最近10份
+  if (history.length > 10) history.length = 10;
+  localStorage.setItem('compliance-history', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('compliance-history') || '[]');
+  const list = document.getElementById('history-list');
+  
+  if (history.length === 0) {
+    list.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 20px;">暂无历史报告</p>';
+    return;
+  }
+  
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item">
+      <div>
+        <strong>${escapeHtml(h.data.companyName)}</strong> - ${escapeHtml(h.data.aiSystemName)}
+        <span class="risk-badge ${h.risk.levelClass}" style="font-size: 12px; padding: 2px 10px; margin-left: 8px;">${h.risk.levelText}</span>
+        <div style="font-size: 12px; color: #7f8c8d; margin-top: 4px;">
+          ${h.id} · ${h.date}
+        </div>
+      </div>
+      <div class="history-actions">
+        <button class="btn-secondary" onclick="loadHistory(${i})">查看</button>
+        <button class="btn-danger" onclick="deleteHistory(${i})">删除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadHistory(index) {
+  const history = JSON.parse(localStorage.getItem('compliance-history') || '[]');
+  const entry = history[index];
+  if (!entry) return;
+  
+  // 填充表单
+  const form = document.getElementById('compliance-form');
+  Object.entries(entry.data).forEach(([key, value]) => {
+    const inputs = form.querySelectorAll(`[name="${key}"]`);
+    inputs.forEach(input => {
+      if (input.type === 'checkbox') {
+        input.checked = Array.isArray(value) ? value.includes(input.value) : value === input.value;
+        input.parentElement.classList.toggle('checked', input.checked);
+      } else {
+        input.value = value;
+      }
+    });
+  });
+  
+  generateReport();
+}
+
+function deleteHistory(index) {
+  if (!confirm('确定删除这份历史报告？')) return;
+  const history = JSON.parse(localStorage.getItem('compliance-history') || '[]');
+  history.splice(index, 1);
+  localStorage.setItem('compliance-history', JSON.stringify(history));
+  renderHistory();
+}
+
+// 加载草稿
+function loadDraft() {
+  const draft = localStorage.getItem('compliance-draft');
+  if (!draft) return;
+  
+  const data = JSON.parse(draft);
+  const form = document.getElementById('compliance-form');
+  Object.entries(data).forEach(([key, value]) => {
+    const inputs = form.querySelectorAll(`[name="${key}"]`);
+    inputs.forEach(input => {
+      if (input.type === 'checkbox') {
+        input.checked = Array.isArray(value) ? value.includes(input.value) : value === input.value;
+        input.parentElement.classList.toggle('checked', input.checked);
+      } else {
+        input.value = value;
+      }
+    });
+  });
+}
+
+// 初始化
+renderHistory();
+loadDraft();
+</script>
+</body>
+</html>

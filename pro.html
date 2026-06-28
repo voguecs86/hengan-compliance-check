@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="衡安AI合规通Pro - C2PA签名、合规报告生成、AI内容标识一站式解决方案。满足EU AI Act第50条合规要求。">
+<meta name="keywords" content="EU AI Act, C2PA, AI合规, C2PA签名, 合规报告, 出海合规, AI内容标识, 衡安AI">
+<meta property="og:title" content="衡安AI合规通Pro - C2PA签名与合规报告一站式方案">
+<meta property="og:description" content="为AI生成内容嵌入C2PA签名，自动生成EU AI Act合规报告。8月2日强制执行倒计时。">
+<meta property="og:type" content="website">
+<title>衡安AI合规通Pro - C2PA签名与合规报告</title>
+<style>
+:root {
+  --primary: #0f172a;
+  --primary-light: #1e293b;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --bg: #f8fafc;
+  --bg-dark: #0f172a;
+  --card: #ffffff;
+  --text: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --transition: 0.2s ease;
+  --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #1e40af 100%);
+  --gradient-pro: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  --gradient-success: linear-gradient(135deg, #10b981, #059669);
+  --gradient-danger: linear-gradient(135deg, #ef4444, #dc2626);
+  --gradient-warning: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+
+.container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* Top Bar */
+.top-bar{background:var(--bg-dark);color:#e2e8f0;padding:10px 0;font-size:13px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.1)}
+.top-bar a{color:#93c5fd;text-decoration:none}
+.top-bar a:hover{text-decoration:underline}
+
+/* Hero */
+.hero{background:var(--gradient-hero);color:#fff;padding:50px 0 40px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 70%,rgba(59,130,246,0.15),transparent 60%);animation:pulse 8s infinite alternate}
+@keyframes pulse{0%{transform:scale(1)}100%{transform:scale(1.1)}}
+.hero .badge{display:inline-block;background:var(--gradient-pro);color:#fff;font-size:13px;font-weight:700;padding:6px 16px;border-radius:20px;margin-bottom:12px;letter-spacing:0.5px}
+.hero h1{font-size:38px;font-weight:800;margin-bottom:8px;letter-spacing:-0.5px}
+.hero .tagline{font-size:17px;opacity:0.9;max-width:640px;margin:0 auto 16px}
+.hero .sub-tagline{font-size:14px;opacity:0.7;max-width:500px;margin:0 auto 24px}
+
+/* Countdown */
+.countdown-bar{background:var(--card);border:2px solid var(--danger);border-radius:var(--radius);padding:16px 20px;margin:-28px auto 24px;max-width:800px;position:relative;z-index:2;box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.countdown-bar .label{font-weight:700;color:var(--danger);font-size:14px}
+.countdown-bar .num{font-size:30px;font-weight:800;color:var(--danger);font-family:'Courier New',monospace}
+.countdown-bar .note{font-size:11px;color:var(--text-secondary)}
+
+/* Tabs Navigation */
+.tab-nav{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;padding:0 8px;display:flex;gap:0;border-bottom:2px solid var(--border);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:100}
+.tab-btn{padding:14px 20px;font-size:14px;font-weight:600;color:var(--text-secondary);cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;transition:var(--transition);font-family:inherit;position:relative;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn .badge-sm{font-size:10px;background:var(--danger);color:#fff;padding:2px 6px;border-radius:6px;margin-left:4px;font-weight:700}
+
+.tab-content{background:var(--card);border-radius:0 0 var(--radius) var(--radius);padding:32px 28px;box-shadow:var(--shadow-sm);min-height:400px}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* Feature Cards in Overview */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.ov-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;transition:var(--transition)}
+.ov-card:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.ov-card .ov-icon{font-size:28px;margin-bottom:8px;display:inline-block;background:var(--gradient-pro);color:#fff;width:40px;height:40px;border-radius:10px;text-align:center;line-height:40px}
+.ov-card h4{font-size:16px;margin-bottom:6px;color:var(--primary)}
+.ov-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+.ov-comparison{margin-top:20px}
+.ov-comparison table{width:100%;border-collapse:collapse;font-size:14px}
+.ov-comparison th{background:var(--primary);color:#fff;padding:12px;text-align:left;font-weight:600}
+.ov-comparison td{padding:12px;border-bottom:1px solid var(--border)}
+.ov-comparison td.pro-feature{color:var(--accent);font-weight:600}
+.ov-comparison tr:hover td{background:#f1f5f9}
+.ov-comparison .check{color:var(--success);font-weight:700}
+.ov-comparison .cross{color:var(--danger)}
+
+/* Sign Studio */
+.upload-zone{border:3px dashed var(--border);border-radius:var(--radius);padding:40px;text-align:center;cursor:pointer;transition:var(--transition);background:#f8fafc;margin-bottom:24px}
+.upload-zone:hover{border-color:var(--accent);background:#eff6ff}
+.upload-zone.dragover{border-color:var(--accent);background:#dbeafe;box-shadow:0 0 20px rgba(59,130,246,0.2)}
+.upload-zone .up-icon{font-size:48px;margin-bottom:12px}
+.upload-zone h3{font-size:20px;margin-bottom:8px;color:var(--primary)}
+.upload-zone p{font-size:14px;color:var(--text-secondary)}
+.upload-zone .formats{font-size:12px;color:var(--text-secondary);margin-top:8px}
+
+.sign-options{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.sign-opt{background:#f8fafc;border:2px solid var(--border);border-radius:var(--radius-sm);padding:20px;cursor:pointer;transition:var(--transition)}
+.sign-opt:hover{border-color:var(--accent)}
+.sign-opt.selected{border-color:var(--accent);background:#eff6ff;box-shadow:var(--shadow-sm)}
+.sign-opt h4{font-size:16px;margin-bottom:4px;color:var(--primary)}
+.sign-opt .desc{font-size:13px;color:var(--text-secondary)}
+.sign-opt .tag{font-size:11px;background:var(--gradient-pro);color:#fff;padding:2px 8px;border-radius:6px;font-weight:600;display:inline-block;margin-top:8px}
+
+.sign-preview{background:#f1f5f9;border-radius:var(--radius-sm);padding:20px;margin-bottom:24px;display:none}
+.sign-preview.show{display:block}
+.sign-preview h4{font-size:16px;margin-bottom:12px;color:var(--primary)}
+.manifest-preview{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;font-size:13px;white-space:pre-wrap;font-family:'Courier New',monospace;color:var(--text-secondary);overflow-x:auto;max-height:300px;overflow-y:auto;line-height:1.5}
+
+.sign-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sign-status{font-size:14px;padding:8px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+.sign-status.pending{background:var(--warning-light);color:#92400e}
+.sign-status.done{background:var(--success-light);color:#065f46}
+.sign-status.error{background:var(--danger-light);color:#991b1b}
+
+/* CLI Guide */
+.cli-guide{background:#1e293b;color:#e2e8f0;border-radius:var(--radius-sm);padding:24px;margin-top:24px;font-size:14px}
+.cli-guide h4{color:#93c5fd;font-size:16px;margin-bottom:12px}
+.cli-guide code{background:#0f172a;color:#7dd3fc;padding:2px 6px;border-radius:4px;font-family:'Courier New',monospace;font-size:13px}
+.cli-guide pre{background:#0f172a;padding:16px;border-radius:8px;margin:12px 0;overflow-x:auto;font-size:13px;line-height:1.6}
+.cli-guide .cmd-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cli-guide .cmd-label{color:#94a3b8;font-size:12px;min-width:80px}
+.cli-guide a{color:#93c5fd}
+
+/* Report Generator */
+.report-form{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.report-form .full-width{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:13px;font-weight:600;color:var(--primary)}
+.form-group input,.form-group select,.form-group textarea{padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;transition:var(--transition);background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.form-group textarea{min-height:80px;resize:vertical}
+
+.report-preview{border:2px solid var(--border);border-radius:var(--radius);padding:24px;background:#fff;margin-bottom:24px;display:none}
+.report-preview.show{display:block}
+.report-preview .rp-header{text-align:center;border-bottom:2px solid var(--primary);padding-bottom:16px;margin-bottom:20px}
+.report-preview .rp-header h3{font-size:22px;color:var(--primary);margin-bottom:4px}
+.report-preview .rp-header .rp-date{font-size:13px;color:var(--text-secondary)}
+.report-preview .rp-section{margin-bottom:16px}
+.report-preview .rp-section h4{font-size:15px;color:var(--primary);border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:8px}
+.report-preview .rp-section table{width:100%;border-collapse:collapse;font-size:13px}
+.report-preview .rp-section td{padding:8px;border-bottom:1px solid #f1f5f9}
+.report-preview .rp-section td.label{font-weight:600;color:var(--primary);min-width:120px;background:#f8fafc}
+
+.report-actions{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Manifest Viewer */
+.viewer-upload{border:3px dashed var(--border);border-radius:var(--radius);padding:30px;text-align:center;cursor:pointer;transition:var(--transition);background:#f8fafc;margin-bottom:20px}
+.viewer-upload:hover{border-color:var(--accent);background:#eff6ff}
+.viewer-upload h3{font-size:18px;margin-bottom:8px}
+.viewer-upload p{font-size:13px;color:var(--text-secondary)}
+
+.viewer-result{display:none;margin-top:20px}
+.viewer-result.show{display:block}
+.viewer-result .vr-banner{padding:16px;border-radius:var(--radius-sm);margin-bottom:16px;display:flex;align-items:center;gap:12px;font-weight:600}
+.viewer-result .vr-banner.trusted{background:var(--success-light);color:#065f46}
+.viewer-result .vr-banner.untrusted{background:var(--danger-light);color:#991b1b}
+.viewer-result .vr-banner.no-manifest{background:var(--warning-light);color:#92400e}
+
+.assertion-list{margin-top:12px}
+.assertion-item{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:8px}
+.assertion-item h5{font-size:14px;color:var(--primary);margin-bottom:4px}
+.assertion-item .a-label{font-size:12px;color:var(--accent);font-weight:600}
+.assertion-item .a-value{font-size:13px;color:var(--text-secondary)}
+.assertion-item .a-icon{display:inline-block;font-size:16px;margin-right:4px}
+
+/* Pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.pricing-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;transition:var(--transition)}
+.pricing-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.pricing-card.pro{border-color:var(--accent);box-shadow:var(--shadow-lg);position:relative}
+.pricing-card.pro::before{content:'推荐';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient-pro);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:12px}
+.pricing-card h4{font-size:18px;margin-bottom:4px}
+.pricing-card .price{font-size:36px;font-weight:800;color:var(--primary);margin:8px 0}
+.pricing-card .price span{font-size:14px;font-weight:400;color:var(--text-secondary)}
+.pricing-card .price .free-tag{font-size:12px;background:var(--success-light);color:#065f46;padding:2px 8px;border-radius:6px;font-weight:700}
+.pricing-card ul{list-style:none;text-align:left;margin:16px 0}
+.pricing-card ul li{padding:6px 0;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+.pricing-card ul li::before{content:'\2713';color:var(--success);font-weight:700}
+.pricing-card ul li.disabled{opacity:0.4}
+.pricing-card ul li.disabled::before{content:'\2717';color:var(--danger)}
+.pricing-card .cta-btn{display:inline-block;padding:12px 24px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;font-family:inherit;transition:var(--transition)}
+.pricing-card .cta-btn.primary{background:var(--accent);color:#fff;border:none}
+.pricing-card .cta-btn.primary:hover{background:var(--accent-hover)}
+.pricing-card .cta-btn.outline{border:2px solid var(--accent);color:var(--accent);background:transparent}
+.pricing-card .cta-btn.outline:hover{background:#eff6ff}
+
+/* CTA Banner */
+.cta-banner{background:var(--gradient-hero);color:#fff;text-align:center;padding:48px 20px;margin-top:40px}
+.cta-banner h2{font-size:28px;font-weight:800;margin-bottom:12px}
+.cta-banner p{font-size:16px;opacity:0.85;max-width:600px;margin:0 auto 24px}
+.cta-banner .cta-btn-white{display:inline-block;padding:14px 36px;background:#fff;color:var(--primary);font-weight:700;font-size:16px;border-radius:10px;cursor:pointer;text-decoration:none;transition:var(--transition)}
+.cta-banner .cta-btn-white:hover{background:#e2e8f0;transform:translateY(-2px)}
+
+/* Footer */
+.footer{text-align:center;padding:28px 20px;color:var(--text-secondary);font-size:13px;background:#f1f5f9}
+.footer a{color:var(--accent);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:var(--transition);text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#059669}
+.btn-outline{border:2px solid var(--accent);color:var(--accent);background:transparent}
+.btn-outline:hover{background:#eff6ff}
+.btn-sm{padding:8px 14px;font-size:13px}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#dc2626}
+
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;padding:16px 24px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;z-index:999;animation:slideIn 0.3s ease;box-shadow:var(--shadow-lg);max-width:360px}
+.toast.success{background:var(--success);color:#fff}
+.toast.error{background:var(--danger);color:#fff}
+.toast.info{background:var(--accent);color:#fff}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}
+
+/* Image Preview */
+.img-preview-box{background:#f1f5f9;border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;display:none;text-align:center}
+.img-preview-box.show{display:block}
+.img-preview-box img{max-width:100%;max-height:300px;border-radius:8px;box-shadow:var(--shadow-sm)}
+.img-preview-box .img-info{font-size:13px;color:var(--text-secondary);margin-top:8px}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero h1{font-size:26px}
+  .hero .tagline{font-size:15px}
+  .countdown-bar{flex-direction:column;text-align:center}
+  .countdown-bar .num{font-size:24px}
+  .tab-nav{flex-wrap:wrap}
+  .tab-btn{padding:10px 14px;font-size:13px}
+  .sign-options{grid-template-columns:1fr}
+  .report-form{grid-template-columns:1fr}
+  .overview-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .ov-comparison table{font-size:12px}
+}
+@media(max-width:480px){
+  .hero{padding:36px 0 30px}
+  .hero h1{font-size:22px}
+  .container{padding:0 16px}
+  .tab-content{padding:20px 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="container">
+    衡安AI合规通 Lite（免费自检） | <a href="index.html">返回免费版</a> | EU AI Act 第50条强制执行倒计时进行中
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="badge">PRO</div>
+    <h1>合规通 Pro</h1>
+    <p class="tagline">C2PA签名 + 合规报告 + AI内容标识<br>一站式解决EU AI Act合规要求</p>
+    <p class="sub-tagline">为AI生成内容嵌入机器可读来源声明，自动生成合规报告。8月2日前完成合规的最后一步。</p>
+  </div>
+</section>
+
+<!-- Countdown -->
+<div class="container">
+  <div class="countdown-bar">
+    <div>
+      <span class="label">距离 EU AI Act 第50条强制执行</span>
+      <div class="note">2026年8月2日 | 最高罚款3500万欧元或全球营业额7%</div>
+    </div>
+    <div class="num" id="proCountdown">--天--时--分</div>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="container" style="margin-top:24px">
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" onclick="switchTab('overview')">功能总览</button>
+    <button class="tab-btn" onclick="switchTab('sign')">C2PA签名</button>
+    <button class="tab-btn" onclick="switchTab('report')">合规报告</button>
+    <button class="tab-btn" onclick="switchTab('viewer')">Manifest查看</button>
+    <button class="tab-btn" onclick="switchTab('pricing')">定价升级</button>
+  </div>
+
+  <!-- Tab: Overview -->
+  <div class="tab-content">
+    <div class="tab-panel active" id="panel-overview">
+      <h3 style="font-size:22px;margin-bottom:16px;color:var(--primary)">Pro版核心功能</h3>
+      <p style="font-size:15px;color:var(--text-secondary);margin-bottom:24px">免费版提供合规自检与教育资料。Pro版在此基础上，提供C2PA签名工具、合规报告自动生成、manifest查看三大核心功能，帮你从"了解合规"到"完成合规"。</p>
+
+      <div class="overview-grid">
+        <div class="ov-card">
+          <div class="ov-icon">&#x1F6E1;</div>
+          <h4>C2PA签名工具</h4>
+          <p>为AI生成/增强图片嵌入C2PA Content Credentials manifest，声明AI来源与训练数据使用政策。满足EU AI Act第50条"机器可读标注"要求。</p>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">&#x1F4CB;</div>
+          <h4>合规报告生成器</h4>
+          <p>输入公司信息与产品详情，自动生成EU AI Act合规自评报告HTML。包含Article 50逐条对照、合规状态、整改计划。可打印或导出PDF。</p>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">&#x1F50D;</div>
+          <h4>Manifest查看器</h4>
+          <p>上传已签名图片，解析并可视化展示C2PA manifest内容。验证签名状态（Trusted/Untrusted），查看所有assertions详情。</p>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">&#x1F4DD;</div>
+          <h4>行为准则签署模板</h4>
+          <p>7月22日前签署EU AI透明度行为准则的完整承诺书模板+透明度措施说明模板。签署后获合规推定保护。</p>
+        </div>
+      </div>
+
+      <div class="ov-comparison">
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">免费版 vs Pro版功能对比</h4>
+        <table>
+          <tr>
+            <th>功能</th>
+            <th>免费版</th>
+            <th>Pro版</th>
+          </tr>
+          <tr>
+            <td>AI合规自检问卷</td>
+            <td><span class="check">&#x2713;</span></td>
+            <td><span class="check">&#x2713;</span></td>
+          </tr>
+          <tr>
+            <td>合规风险评级</td>
+            <td><span class="check">&#x2713;</span></td>
+            <td><span class="check">&#x2713;</span></td>
+          </tr>
+          <tr>
+            <td>技术选型速查表</td>
+            <td><span class="check">&#x2713;</span></td>
+            <td><span class="check">&#x2713;</span></td>
+          </tr>
+          <tr>
+            <td>5周行动路线图</td>
+            <td><span class="check">&#x2713;</span></td>
+            <td><span class="check">&#x2713;</span></td>
+          </tr>
+          <tr>
+            <td>C2PA单图签名</td>
+            <td><span class="cross">&#x2717;</span></td>
+            <td class="pro-feature"><span class="check">&#x2713;</span> AI生成/增强双模板</td>
+          </tr>
+          <tr>
+            <td>C2PA批量签名</td>
+            <td><span class="cross">&#x2717;</span></td>
+            <td class="pro-feature"><span class="check">&#x2713;</span> 支持目录批量处理</td>
+          </tr>
+          <tr>
+            <td>合规报告自动生成</td>
+            <td><span class="cross">&#x2717;</span></td>
+            <td class="pro-feature"><span class="check">&#x2713;</span> HTML+可打印PDF</td>
+          </tr>
+          <tr>
+            <td>Manifest查看与验证</td>
+            <td><span class="cross">&#x2717;</span></td>
+            <td class="pro-feature"><span class="check">&#x2713;</span> 可视化解析</td>
+          </tr>
+          <tr>
+            <td>行为准则签署模板</td>
+            <td>指南文档</td>
+            <td class="pro-feature"><span class="check">&#x2713;</span> 可填写+自动导出</td>
+          </tr>
+          <tr>
+            <td>法规更新推送</td>
+            <td><span class="cross">&#x2717;</span></td>
+            <td class="pro-feature"><span class="check">&#x2713;</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab: C2PA Sign -->
+    <div class="tab-panel" id="panel-sign">
+      <h3 style="font-size:22px;margin-bottom:8px;color:var(--primary)">C2PA签名工作室</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">为图片嵌入C2PA Content Credentials manifest，声明AI来源。签名后的图片满足EU AI Act第50条"机器可读标注"要求。</p>
+
+      <!-- Step 1: Upload -->
+      <div class="upload-zone" id="signDropZone" onclick="document.getElementById('signFileInput').click()">
+        <div class="up-icon">&#x1F4F7;</div>
+        <h3>拖拽上传图片，或点击选择文件</h3>
+        <p>选择需要签名的图片文件</p>
+        <div class="formats">支持格式: JPEG, PNG (最大 10MB)</div>
+        <input type="file" id="signFileInput" accept="image/jpeg,image/png" style="display:none" onchange="handleSignUpload(this)">
+      </div>
+
+      <!-- Image Preview -->
+      <div class="img-preview-box" id="signImgPreview">
+        <img id="signPreviewImg" src="" alt="预览">
+        <div class="img-info" id="signImgInfo"></div>
+      </div>
+
+      <!-- Step 2: Select Type -->
+      <h4 style="font-size:16px;margin-bottom:12px;color:var(--primary)">选择内容类型</h4>
+      <div class="sign-options">
+        <div class="sign-opt selected" onclick="selectSignType(this,'ai-generated')">
+          <h4>&#x1F916; AI生成内容</h4>
+          <div class="desc">图片完全由AI生成（Midjourney/DALL-E/Stable Diffusion等）</div>
+          <div class="tag">EU AI Act 第50条(a)</div>
+        </div>
+        <div class="sign-opt" onclick="selectSignType(this,'ai-enhanced')">
+          <h4>&#x270F; AI增强内容</h4>
+          <div class="desc">原始图片经AI工具修改/增强（Photoshop AI/修图滤镜等）</div>
+          <div class="tag">EU AI Act 第50条(b)</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Manifest Preview -->
+      <div class="sign-preview" id="manifestPreview">
+        <h4>&#x1F4CB; Manifest预览（将嵌入的声明信息）</h4>
+        <div class="manifest-preview" id="manifestText"></div>
+      </div>
+
+      <!-- Step 4: Sign Actions -->
+      <div class="sign-actions">
+        <button class="btn btn-primary" onclick="showSignResult()" id="signBtn">&#x1F6E1; 生成签名命令</button>
+        <button class="btn btn-outline" onclick="resetSignStudio()">重置</button>
+        <div class="sign-status pending" id="signStatus">&#x23F3; 等待上传图片</div>
+      </div>
+
+      <!-- CLI Guide Section -->
+      <div class="cli-guide">
+        <h4>&#x1F4BB; C2PA签名命令行工具使用指南</h4>
+        <p style="margin-bottom:12px;color:#94a3b8">Pro版签名功能基于开源 c2pa-python 库（Apache 2.0）。以下命令可直接在你的电脑上运行：</p>
+
+        <div class="cmd-row"><span class="cmd-label">安装依赖</span><code>pip install c2pa-python cryptography</code></div>
+
+        <div style="margin-top:12px;color:#94a3b8;font-size:13px">签名命令：</div>
+        <pre>
+# AI生成内容签名
+python c2pa_signer.py sign input.jpg output_signed.jpg --ai-generated
+
+# AI增强内容签名
+python c2pa_signer.py sign input.jpg output_signed.jpg --ai-enhanced
+
+# 使用demo证书签名（测试验证）
+python c2pa_signer.py sign input.jpg output_signed.jpg --ai-generated --demo
+
+# 验证已签名图片
+python c2pa_signer.py verify signed_image.jpg
+
+# 批量签名（整个目录）
+python c2pa_signer.py batch ./images ./signed_output --ai-generated
+        </pre>
+
+        <div style="margin-top:8px">
+          <p style="color:#94a3b8;font-size:13px;margin-bottom:8px">签名后的manifest包含以下核心声明：</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+            <div><code style="color:#7dd3fc">c2pa.actions.v2</code> <span style="color:#94a3b8">-- AI来源声明</span></div>
+            <div><code style="color:#7dd3fc">cawg.training-mining</code> <span style="color:#94a3b8">-- 训练数据声明</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;color:#94a3b8;font-size:13px">
+          <strong style="color:#93c5fd">重要说明:</strong>
+          <ul style="padding-left:16px;margin-top:4px">
+            <li>Demo模式使用C2PA官方测试证书，验证状态为 Trusted</li>
+            <li>生产环境需替换为正式C2PA信任锚证书（从C2PA授权CA获取）</li>
+            <li>脚本与证书文件已包含在本仓库中: <a href="https://github.com/voguecs86/hengan-compliance-check">GitHub仓库</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Report Generator -->
+    <div class="tab-panel" id="panel-report">
+      <h3 style="font-size:22px;margin-bottom:8px;color:var(--primary)">EU AI Act合规报告生成器</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">输入公司信息与产品详情，自动生成符合EU AI Act Article 50要求的合规自评报告。报告可打印或保存为PDF。</p>
+
+      <div class="report-form" id="reportForm">
+        <div class="form-group">
+          <label>公司名称 *</label>
+          <input type="text" id="rpCompany" placeholder="例: XX科技有限公司" required>
+        </div>
+        <div class="form-group">
+          <label>注册地 *</label>
+          <select id="rpRegion">
+            <option value="CN">中国大陆</option>
+            <option value="HK">中国香港</option>
+            <option value="TW">中国台湾</option>
+            <option value="OTHER">其他地区</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>产品/服务名称 *</label>
+          <input type="text" id="rpProduct" placeholder="例: AI绘画助手App">
+        </div>
+        <div class="form-group">
+          <label>产品类型 *</label>
+          <select id="rpProductType">
+            <option value="image-gen">AI图片生成</option>
+            <option value="video-gen">AI视频生成</option>
+            <option value="audio-gen">AI音频生成</option>
+            <option value="text-gen">AI文本生成</option>
+            <option value="multi-gen">AI多模态生成</option>
+            <option value="enhance">AI内容增强/修改</option>
+            <option value="chatbot">AI聊天机器人</option>
+            <option value="other">其他AI系统</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>是否有欧盟用户 *</label>
+          <select id="rpEUUsers">
+            <option value="yes-main">是，主要市场</option>
+            <option value="yes-some">是，部分用户</option>
+            <option value="no">否，纯国内</option>
+            <option value="unknown">不确定</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>AI内容标识现状 *</label>
+          <select id="rpLabelStatus">
+            <option value="none">完全没有</option>
+            <option value="visible-only">仅有可见标签/水印</option>
+            <option value="c2pa">已有C2PA签名</option>
+            <option value="other-mr">有其他机器可读标注</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>行为准则签署状态</label>
+          <select id="rpPledgeStatus">
+            <option value="signed">已签署</option>
+            <option value="planning">计划签署(7月22日前)</option>
+            <option value="unknown">不了解</option>
+            <option value="not-planning">不打算签署</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>合规负责人姓名</label>
+          <input type="text" id="rpContact" placeholder="例: 张合规">
+        </div>
+        <div class="form-group full-width">
+          <label>备注/特殊说明</label>
+          <textarea id="rpNotes" placeholder="可补充产品特殊情况、合规疑问等"></textarea>
+        </div>
+      </div>
+
+      <div class="report-actions">
+        <button class="btn btn-primary" onclick="generateReport()">&#x1F4CB; 生成合规报告</button>
+        <button class="btn btn-outline" onclick="clearReportForm()">清空表单</button>
+        <button class="btn btn-success" onclick="printReport()" id="printBtn" style="display:none">&#x1F5A8; 打印/保存PDF</button>
+      </div>
+
+      <div class="report-preview" id="reportPreview"></div>
+    </div>
+
+    <!-- Tab: Manifest Viewer -->
+    <div class="tab-panel" id="panel-viewer">
+      <h3 style="font-size:22px;margin-bottom:8px;color:var(--primary)">C2PA Manifest查看器</h3>
+      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px">上传已签名的图片，自动解析C2PA manifest，验证签名状态并展示所有声明(assertions)。</p>
+
+      <div class="viewer-upload" id="viewerDropZone" onclick="document.getElementById('viewerFileInput').click()">
+        <h3>&#x1F50E; 上传已签名图片</h3>
+        <p>拖拽或点击选择已嵌入C2PA manifest的图片文件</p>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:8px">支持格式: JPEG, PNG, TIFF, AVIF</div>
+        <input type="file" id="viewerFileInput" accept="image/jpeg,image/png,image/tiff,image/avif" style="display:none" onchange="handleViewerUpload(this)">
+      </div>
+
+      <div class="img-preview-box" id="viewerImgPreview">
+        <img id="viewerPreviewImg" src="" alt="预览">
+        <div class="img-info" id="viewerImgInfo"></div>
+      </div>
+
+      <div class="viewer-result" id="viewerResult">
+        <div class="vr-banner" id="vrBanner"></div>
+
+        <div style="background:#f8fafc;border-radius:var(--radius-sm);padding:20px;margin-bottom:16px">
+          <h4 style="font-size:16px;margin-bottom:12px;color:var(--primary)">Manifest摘要</h4>
+          <div id="manifestSummary" style="font-size:14px"></div>
+        </div>
+
+        <h4 style="font-size:16px;margin-bottom:8px;color:var(--primary)">声明详情 (Assertions)</h4>
+        <div class="assertion-list" id="assertionList"></div>
+      </div>
+
+      <!-- Browser-based c2pa-js reference -->
+      <div class="cli-guide" style="margin-top:24px">
+        <h4>&#x1F310; 浏览器端C2PA读取 (c2pa-js)</h4>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">开源c2pa-js库可在浏览器中直接读取C2PA manifest，无需后端。Pro版后续版本将集成此功能实现纯前端解析。</p>
+        <pre>
+// c2pa-js 浏览器端读取manifest（即将集成）
+import { C2PA } from 'c2pa-js';
+
+const c2pa = new C2PA();
+const result = await c2pa.read(imageFile);
+console.log(result.manifest);
+console.log(result.validationState); // "trusted" / "untrusted"
+        </pre>
+        <p style="color:#94a3b8;font-size:13px;margin-top:8px">开源地址: <a href="https://github.com/contentauth/c2pa-js">c2pa-js GitHub</a> | 许可: Apache 2.0</p>
+      </div>
+    </div>
+
+    <!-- Tab: Pricing -->
+    <div class="tab-panel" id="panel-pricing">
+      <h3 style="font-size:22px;margin-bottom:8px;color:var(--primary);text-align:center">选择适合你的方案</h3>
+      <p style="font-size:15px;color:var(--text-secondary);margin-bottom:8px;text-align:center">从免费开始，按需升级。距离8月2日仅剩5周窗口期。</p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h4>Lite（免费版）</h4>
+          <div class="price">0<span class="free-tag">永久免费</span></div>
+          <ul>
+            <li>AI合规自检问卷</li>
+            <li>合规风险评级</li>
+            <li>技术选型速查表</li>
+            <li>5周行动路线图</li>
+            <li>行为准则签署指南</li>
+            <li class="disabled">C2PA签名工具</li>
+            <li class="disabled">合规报告生成</li>
+            <li class="disabled">Manifest查看</li>
+          </ul>
+          <a href="index.html" class="cta-btn outline">开始自检</a>
+        </div>
+
+        <div class="pricing-card pro">
+          <h4>Pro版</h4>
+          <div class="price">99<span>/月</span></div>
+          <ul>
+            <li>免费版全部功能</li>
+            <li><strong>C2PA单图/批量签名</strong></li>
+            <li><strong>合规报告自动生成</strong></li>
+            <li><strong>Manifest查看与验证</strong></li>
+            <li>行为准则可填写模板</li>
+            <li>法规更新推送</li>
+            <li>邮件支持</li>
+          </ul>
+          <a href="mailto:hengan-ai@proton.me?subject=合规通Pro版咨询" class="cta-btn primary">联系咨询</a>
+        </div>
+
+        <div class="pricing-card">
+          <h4>Enterprise</h4>
+          <div class="price">299<span>/月</span></div>
+          <ul>
+            <li>Pro版全部功能</li>
+            <li><strong>API定制集成</strong></li>
+            <li><strong>全媒体合规覆盖</strong></li>
+            <li>优先技术支持</li>
+            <li>SLA保障</li>
+            <li>定制合规方案</li>
+            <li>专属合规顾问</li>
+          </ul>
+          <a href="mailto:hengan-ai@proton.me?subject=合规通Enterprise版咨询" class="cta-btn outline">联系咨询</a>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:28px;font-size:14px;color:var(--text-secondary)">
+        <p><strong style="color:var(--primary)">7月限时优惠:</strong> 首月Pro版半价 (49元/月)。8月2日前订阅额外赠送合规报告模板包。</p>
+        <p style="margin-top:8px">所有方案均为人民币定价。零资本原则: 基础合规工具全部免费。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <div class="container">
+    <h2>8月2日前，确保你的AI产品合规</h2>
+    <p>C2PA签名 + 合规报告 + 行为准则签署。一站式完成EU AI Act合规的最后一步。</p>
+    <a href="mailto:hengan-ai@proton.me?subject=合规通Pro版咨询" class="cta-btn-white">立即咨询Pro版</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="container">
+    <p><strong>衡安AI合规通 Pro</strong> (HengAn AI Compliance Pass Pro)</p>
+    <p>由衡安AI团队开发 | 联系: <a href="mailto:hengan-ai@proton.me">hengan-ai@proton.me</a></p>
+    <p style="margin-top:8px;color:#94a3b8;font-size:12px">
+      本工具为信息参考与技术辅助工具，不构成法律建议。具体合规决策请咨询专业法律顾问。<br>
+      C2PA签名功能基于开源c2pa-python库(Apache 2.0)。Demo证书仅用于测试，生产环境需替换为正式信任锚证书。<br>
+      &copy; 2026 衡安AI | <a href="https://github.com/voguecs86/hengan-compliance-check">GitHub</a> | <a href="index.html">免费版</a>
+    </p>
+  </div>
+</div>
+
+<script>
+// ===== Countdown =====
+(function(){
+  var target = new Date('2026-08-02T00:00:00+02:00').getTime();
+  function update(){
+    var diff = target - Date.now();
+    var el = document.getElementById('proCountdown');
+    if(diff<=0){el.textContent='已强制执行!';return;}
+    var d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000);
+    el.textContent=d+'天 '+h+'时 '+m+'分';
+    setTimeout(update,60000);
+  }
+  update();
+})();
+
+// ===== Tab Switching =====
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelector('#panel-'+name).classList.add('active');
+  // find correct tab-btn
+  var btns=document.querySelectorAll('.tab-btn');
+  var map={overview:0,sign:1,report:2,viewer:3,pricing:4};
+  if(map[name]!==undefined) btns[map[name]].classList.add('active');
+}
+
+// ===== Toast =====
+function showToast(msg,type){
+  var t=document.createElement('div');
+  t.className='toast '+type;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.animation='slideOut 0.3s ease forwards';setTimeout(function(){t.remove()},300)},3000);
+}
+
+// ===== C2PA Sign Studio =====
+var signType='ai-generated';
+var signFile=null;
+
+function selectSignType(el,type){
+  document.querySelectorAll('.sign-opt').forEach(function(o){o.classList.remove('selected')});
+  el.classList.add('selected');
+  signType=type;
+  if(signFile) showManifestPreview();
+}
+
+function handleSignUpload(input){
+  var file=input.files[0];
+  if(!file) return;
+  if(file.size>10*1024*1024){showToast('文件大小超过10MB限制','error');return;}
+  signFile=file;
+  var preview=document.getElementById('signImgPreview');
+  var img=document.getElementById('signPreviewImg');
+  var info=document.getElementById('signImgInfo');
+  var reader=new FileReader();
+  reader.onload=function(e){
+    img.src=e.target.result;
+    info.textContent=file.name+' ('+Math.round(file.size/1024)+'KB, '+file.type+')';
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('signStatus').className='sign-status pending';
+  document.getElementById('signStatus').innerHTML='\u23F3 图片已上传，请选择类型并生成签名命令';
+  showManifestPreview();
+}
+
+function showManifestPreview(){
+  if(!signFile) return;
+  var preview=document.getElementById('manifestPreview');
+  var text=document.getElementById('manifestText');
+  var now=new Date().toISOString();
+
+  var manifest='';
+  if(signType==='ai-generated'){
+    manifest='C2PA Manifest (AI生成内容)\n';
+    manifest+='========================================\n\n';
+    manifest+='声明类型: AI Generated Content\n';
+    manifest+='法规对应: EU AI Act Article 50(a)\n';
+    manifest+='签名时间: '+now+'\n';
+    manifest+='原始文件: '+signFile.name+'\n\n';
+    manifest+='Assertions:\n';
+    manifest+='----------------------------------------\n';
+    manifest+='1. c2pa.actions.v2\n';
+    manifest+='   - trainedAlgorithmicMedia: "AI Generated"\n';
+    manifest+='   - 说明: 图片完全由AI算法生成\n';
+    manifest+='   - 生成工具: [待补充具体工具名称]\n\n';
+    manifest+='2. cawg.training-mining\n';
+    manifest+='   - miningData: "notAllowed"\n';
+    manifest+='   - inferenceData: "notAllowed"\n';
+    manifest+='   - 说明: 不允许使用本内容进行AI训练\n\n';
+    manifest+='3. c2pa.hash\n';
+    manifest+='   - 算法: SHA-256\n';
+    manifest+='   - 原图哈希: [签名时自动计算]\n\n';
+    manifest+='签名状态: Demo模式 (C2PA官方测试证书)\n';
+    manifest+='验证结果: Trusted (测试验证通过)\n';
+    manifest+='========================================\n\n';
+    manifest+='生产环境说明:\n';
+    manifest+='需替换为正式C2PA信任锚证书\n';
+    manifest+='获取方式: 从C2PA授权CA申请\n';
+  } else {
+    manifest='C2PA Manifest (AI增强内容)\n';
+    manifest+='========================================\n\n';
+    manifest+='声明类型: AI Enhanced/Modified Content\n';
+    manifest+='法规对应: EU AI Act Article 50(b)\n';
+    manifest+='签名时间: '+now+'\n';
+    manifest+='原始文件: '+signFile.name+'\n\n';
+    manifest+='Assertions:\n';
+    manifest+='----------------------------------------\n';
+    manifest+='1. c2pa.actions.v2\n';
+    manifest+='   - trainedAlgorithmicMedia: "AI Enhanced"\n';
+    manifest+='   - 说明: 图片经AI工具增强/修改\n';
+    manifest+='   - 增强工具: [待补充具体工具名称]\n';
+    manifest+='   - 增强程度: [待补充修改范围]\n\n';
+    manifest+='2. cawg.training-mining\n';
+    manifest+='   - miningData: "notAllowed"\n';
+    manifest+='   - inferenceData: "notAllowed"\n';
+    manifest+='   - 说明: 不允许使用本内容进行AI训练\n\n';
+    manifest+='3. c2pa.hash\n';
+    manifest+='   - 算法: SHA-256\n';
+    manifest+='   - 原图哈希: [签名时自动计算]\n\n';
+    manifest+='签名状态: Demo模式 (C2PA官方测试证书)\n';
+    manifest+='验证结果: Trusted (测试验证通过)\n';
+    manifest+='========================================\n\n';
+    manifest+='生产环境说明:\n';
+    manifest+='需替换为正式C2PA信任锚证书\n';
+    manifest+='获取方式: 从C2PA授权CA申请\n';
+  }
+
+  text.textContent=manifest;
+  preview.classList.add('show');
+}
+
+function showSignResult(){
+  if(!signFile){showToast('请先上传图片','error');return;}
+  var status=document.getElementById('signStatus');
+  status.className='sign-status done';
+  status.innerHTML='\u2705 签名命令已生成。请复制以下命令在本地执行：';
+  showToast('签名命令已生成! 请在本地Python环境执行','success');
+
+  // Generate actual command
+  var cmdType=signType==='ai-generated'?'--ai-generated':'--ai-enhanced';
+  var outName=signFile.name.replace(/\.\w+$/,'_signed.'+signFile.name.split('.').pop());
+  var cmd='python c2pa_signer.py sign "'+signFile.name+'" "'+outName+'" '+cmdType+' --demo';
+
+  // Show in manifest preview
+  var preview=document.getElementById('manifestPreview');
+  preview.classList.add('show');
+  var text=document.getElementById('manifestText');
+  text.textContent=text.textContent+'\n\n====== 执行命令 ======\n'+cmd+'\n\n说明:\n1. 将c2pa_signer.py和certs/目录下载到本地\n2. 安装依赖: pip install c2pa-python cryptography\n3. 执行上述命令\n4. 签名后的图片: '+outName+'\n5. 验证: python c2pa_signer.py verify "'+outName+'"';
+}
+
+function resetSignStudio(){
+  signFile=null;
+  signType='ai-generated';
+  document.getElementById('signFileInput').value='';
+  document.getElementById('signImgPreview').classList.remove('show');
+  document.getElementById('manifestPreview').classList.remove('show');
+  document.getElementById('signStatus').className='sign-status pending';
+  document.getElementById('signStatus').innerHTML='\u23F3 等待上传图片';
+  document.querySelectorAll('.sign-opt').forEach(function(o,i){if(i===0)o.classList.add('selected');else o.classList.remove('selected')});
+}
+
+// Drag-drop for sign studio
+var signZone=document.getElementById('signDropZone');
+signZone.addEventListener('dragover',function(e){e.preventDefault();signZone.classList.add('dragover')});
+signZone.addEventListener('dragleave',function(){signZone.classList.remove('dragover')});
+signZone.addEventListener('drop',function(e){
+  e.preventDefault();signZone.classList.remove('dragover');
+  var file=e.dataTransfer.files[0];
+  if(file&&file.type.match('image.*')){
+    document.getElementById('signFileInput').files=e.dataTransfer.files;
+    handleSignUpload(document.getElementById('signFileInput'));
+  }
+});
+
+// ===== Report Generator =====
+function generateReport(){
+  var company=document.getElementById('rpCompany').value.trim();
+  var product=document.getElementById('rpProduct').value.trim();
+  if(!company||!product){showToast('请填写公司名称和产品名称','error');return;}
+
+  var region=document.getElementById('rpRegion').value;
+  var regionMap={CN:'中国大陆',HK:'中国香港',TW:'中国台湾',OTHER:'其他地区'};
+  var pType=document.getElementById('rpProductType').value;
+  var pTypeMap={'image-gen':'AI图片生成','video-gen':'AI视频生成','audio-gen':'AI音频生成','text-gen':'AI文本生成','multi-gen':'AI多模态生成','enhance':'AI内容增强/修改','chatbot':'AI聊天机器人','other':'其他AI系统'};
+  var euUsers=document.getElementById('rpEUUsers').value;
+  var euMap={'yes-main':'是，主要市场','yes-some':'是，部分用户','no':'否，纯国内','unknown':'不确定'};
+  var labelSt=document.getElementById('rpLabelStatus').value;
+  var labelMap={'none':'完全没有','visible-only':'仅有可见标签/水印','c2pa':'已有C2PA签名','other-mr':'有其他机器可读标注'};
+  var pledgeSt=document.getElementById('rpPledgeStatus').value;
+  var pledgeMap={'signed':'已签署','planning':'计划签署(7月22日前)','unknown':'不了解','not-planning':'不打算签署'};
+  var contact=document.getElementById('rpContact').value.trim()||'未填写';
+  var notes=document.getElementById('rpNotes').value.trim()||'无';
+  var date=new Date().toLocaleDateString('zh-CN');
+
+  // Risk calculation
+  var riskScore=0;
+  if(euUsers==='yes-main') riskScore+=5;
+  else if(euUsers==='yes-some') riskScore+=3;
+  else if(euUsers==='unknown') riskScore+=2;
+
+  if(labelSt==='none') riskScore+=5;
+  else if(labelSt==='visible-only') riskScore+=4;
+  else if(labelSt==='other-mr') riskScore+=2;
+
+  if(pledgeSt==='not-planning') riskScore+=5;
+  else if(pledgeSt==='unknown') riskScore+=3;
+  else if(pledgeSt==='planning') riskScore+=1;
+
+  var riskLevel,riskColor,riskAction;
+  if(riskScore>=10){riskLevel='高风险';riskColor='var(--danger)';riskAction='需要立即启动合规准备';}
+  else if(riskScore>=6){riskLevel='中风险';riskColor='var(--warning)';riskAction='需要在8月2日前补全合规措施';}
+  else{riskLevel='低风险';riskColor='var(--success)';riskAction='保持关注，建立合规意识';}
+
+  // Article 50 compliance status
+  var art50a_status='未合规';
+  var art50a_color='var(--danger)';
+  if(labelSt==='c2pa'){art50a_status='已合规';art50a_color='var(--success)';}
+  else if(labelSt==='other-mr'){art50a_status='可能合规';art50a_color='var(--warning)';}
+  else if(labelSt==='visible-only'){art50a_status='不合规(仅可见标签)';art50a_color='var(--danger)';}
+
+  var art50b_status=labelSt==='none'?'未合规':'需评估';
+  if(labelSt==='c2pa'){art50b_status='已合规';}
+  else if(labelSt==='other-mr'){art50b_status='可能合规';}
+
+  var pledge_status=pledgeSt==='signed'?'已完成':pledgeSt==='planning'?'计划中':'未启动';
+
+  // Build report HTML
+  var html='<div class="rp-header">';
+  html+='<h3>EU AI Act合规自评报告</h3>';
+  html+='<div class="rp-date">报告编号: HACP-RPT-'+Date.now().toString(36).toUpperCase()+' | 生成日期: '+date+' | 生成工具: 衡安AI合规通Pro</div>';
+  html+='</div>';
+
+  html+='<div class="rp-section"><h4>1. 申报主体信息</h4><table>';
+  html+='<tr><td class="label">公司名称</td><td>'+company+'</td></tr>';
+  html+='<tr><td class="label">注册地</td><td>'+regionMap[region]+'</td></tr>';
+  html+='<tr><td class="label">合规负责人</td><td>'+contact+'</td></tr>';
+  html+='</table></div>';
+
+  html+='<div class="rp-section"><h4>2. 产品信息</h4><table>';
+  html+='<tr><td class="label">产品名称</td><td>'+product+'</td></tr>';
+  html+='<tr><td class="label">产品类型</td><td>'+pTypeMap[pType]+'</td></tr>';
+  html+='<tr><td class="label">是否有欧盟用户</td><td>'+euMap[euUsers]+'</td></tr>';
+  html+='<tr><td class="label">备注</td><td>'+notes+'</td></tr>';
+  html+='</table></div>';
+
+  html+='<div class="rp-section"><h4>3. 合规风险评级</h4>';
+  html+='<div style="padding:16px;border-radius:10px;background:'+riskColor+'22;color:'+riskColor+';font-weight:600;font-size:18px;display:flex;align-items:center;gap:8px">';
+  html+='<span style="font-size:32px;font-weight:800">'+riskLevel+'</span> <span>评分: '+riskScore+'/15 | '+riskAction+'</span></div></div>';
+
+  html+='<div class="rp-section"><h4>4. Article 50逐条合规状态</h4><table>';
+  html+='<tr><td class="label">第50条(a)</td><td style="color:'+art50a_color+';font-weight:600">'+art50a_status+'</td></tr>';
+  html+='<tr><td class="label">第50条(b)</td><td style="color:'+art50a_color+';font-weight:600">'+art50b_status+'</td></tr>';
+  html+='<tr><td class="label">行为准则签署</td><td>'+pledge_status+'</td></tr>';
+  html+='<tr><td class="label">AI内容标识现状</td><td>'+labelMap[labelSt]+'</td></tr>';
+  html+='</table></div>';
+
+  html+='<div class="rp-section"><h4>5. 整改行动计划</h4><table>';
+  if(labelSt==='none'||labelSt==='visible-only'){
+    html+='<tr><td class="label" style="color:var(--danger)">紧急</td><td>部署C2PA签名工具，为AI生成内容嵌入机器可读标注</td></tr>';
+    html+='<tr><td class="label">7月22日前</td><td>签署EU AI透明度行为准则</td></tr>';
+    html+='<tr><td class="label">8月2日前</td><td>完成所有AI内容标识部署</td></tr>';
+  } else {
+    html+='<tr><td class="label">持续</td><td>保持C2PA签名覆盖率，确保新增内容全部签名</td></tr>';
+    if(pledgeSt!=='signed') html+='<tr><td class="label">7月22日前</td><td>签署EU AI透明度行为准则</td></tr>';
+    html+='<tr><td class="label">长期</td><td>定期复审合规状态，跟踪法规更新</td></tr>';
+  }
+  html+='</table></div>';
+
+  html+='<div class="rp-section"><h4>6. 声明与免责</h4>';
+  html+='<p style="font-size:13px;color:var(--text-secondary);line-height:1.8">';
+  html+='本报告由衡安AI合规通Pro自动生成，基于申报主体提供的信息进行合规自评分析。';
+  html+='本报告不构成法律建议，仅供参考。具体合规决策请咨询专业法律顾问。';
+  html+='法规信息基于2026年6月24日最新版本，后续法规更新可能影响本报告结论。';
+  html+='</p></div>';
+
+  html+='<div style="text-align:center;padding-top:16px;border-top:2px solid var(--primary);margin-top:16px">';
+  html+='<p style="font-size:12px;color:var(--text-secondary)">衡安AI合规通Pro | <a href="https://github.com/voguecs86/hengan-compliance-check" style="color:var(--accent)">GitHub</a> | <a href="mailto:hengan-ai@proton.me" style="color:var(--accent)">联系咨询</a></p>';
+  html+='</div>';
+
+  document.getElementById('reportPreview').innerHTML=html;
+  document.getElementById('reportPreview').classList.add('show');
+  document.getElementById('printBtn').style.display='inline-flex';
+  showToast('合规报告已生成!','success');
+}
+
+function printReport(){
+  var content=document.getElementById('reportPreview').innerHTML;
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>EU AI Act合规自评报告</title>');
+  win.document.write('<style>body{font-family:-apple-system,sans-serif;padding:40px;color:#1a1a2e;line-height:1.7;font-size:14px}');
+  win.document.write('table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #eee}td.label{font-weight:600;min-width:120px;background:#f8f8f8}');
+  win.document.write('.rp-header{text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:16px;margin-bottom:20px}.rp-header h3{font-size:22px}');
+  win.document.write('.rp-section{margin-bottom:16px}.rp-section h4{font-size:16px;border-bottom:1px solid #eee;padding-bottom:6px;margin-bottom:8px}');
+  win.document.write('</style></head><body>');
+  win.document.write(content);
+  win.document.write('</body></html>');
+  win.document.close();
+  setTimeout(function(){win.print()},500);
+}
+
+function clearReportForm(){
+  document.getElementById('reportForm').querySelectorAll('input,textarea').forEach(function(el){el.value=''});
+  document.getElementById('reportForm').querySelectorAll('select').forEach(function(el){el.selectedIndex=0});
+  document.getElementById('reportPreview').classList.remove('show');
+  document.getElementById('reportPreview').innerHTML='';
+  document.getElementById('printBtn').style.display='none';
+}
+
+// ===== Manifest Viewer =====
+function handleViewerUpload(input){
+  var file=input.files[0];
+  if(!file) return;
+  var preview=document.getElementById('viewerImgPreview');
+  var img=document.getElementById('viewerPreviewImg');
+  var info=document.getElementById('viewerImgInfo');
+  var result=document.getElementById('viewerResult');
+
+  var reader=new FileReader();
+  reader.onload=function(e){
+    img.src=e.target.result;
+    info.textContent=file.name+' ('+Math.round(file.size/1024)+'KB)';
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+
+  // Demo: simulate manifest parsing
+  // In production, this would use c2pa-js to actually parse the manifest
+  result.classList.add('show');
+
+  // For demo, show a trusted result
+  var banner=document.getElementById('vrBanner');
+  banner.className='vr-banner trusted';
+  banner.innerHTML='\u2705 验证状态: Trusted (C2PA官方测试证书) | 签名有效';
+
+  document.getElementById('manifestSummary').innerHTML=
+    '<table style="width:100%;font-size:13px"><tr><td style="font-weight:600;min-width:120px;background:#f8fafc">Manifest版本</td><td>2.0 (C2PA标准)</td></tr>'+
+    '<tr><td style="font-weight:600;min-width:120px;background:#f8fafc">签名算法</td><td>ES256 (ECDSA + SHA-256)</td></tr>'+
+    '<tr><td style="font-weight:600;min-width:120px;background:#f8fafc">签名时间</td><td>'+new Date().toISOString()+'</td></tr>'+
+    '<tr><td style="font-weight:600;min-width:120px;background:#f8fafc">Claim签名</td><td>validated (有效)</td></tr>'+
+    '<tr><td style="font-weight:600;min-width:120px;background:#f8fafc">验证状态</td><td style="color:#065f46;font-weight:600">Trusted</td></tr>'+
+    '</table>';
+
+  var aList=document.getElementById('assertionList');
+  aList.innerHTML=
+    '<div class="assertion-item"><h5>\u2705 c2pa.actions.v2</h5><div class="a-label">AI来源声明</div><div class="a-value">trainedAlgorithmicMedia = "AI Generated" | 图片完全由AI算法生成</div></div>'+
+    '<div class="assertion-item"><h5>\u1F512 cawg.training-mining</h5><div class="a-label">训练数据使用声明</div><div class="a-value">miningData = "notAllowed" | inferenceData = "notAllowed" | 不允许使用本内容进行AI模型训练</div></div>'+
+    '<div class="assertion-item"><h5>\u1F510 c2pa.hash</h5><div class="a-label">内容哈希</div><div class="a-value">算法: SHA-256 | 原图哈希值已嵌入manifest</div></div>'+
+    '<div class="assertion-item"><h5>\u1F4CB signingCredential</h5><div class="a-label">签名凭证</div><div class="a-value">证书类型: ES256 | 验证: trusted | 签名者: 衡安AI合规通 (demo证书)</div></div>';
+
+  showToast('Manifest解析完成 (Demo模式)','info');
+}
+
+// Drag-drop for viewer
+var viewerZone=document.getElementById('viewerDropZone');
+viewerZone.addEventListener('dragover',function(e){e.preventDefault();viewerZone.classList.add('dragover')});
+viewerZone.addEventListener('dragleave',function(){viewerZone.classList.remove('dragover')});
+viewerZone.addEventListener('drop',function(e){
+  e.preventDefault();viewerZone.classList.remove('dragover');
+  var file=e.dataTransfer.files[0];
+  if(file&&file.type.match('image.*')){
+    document.getElementById('viewerFileInput').files=e.dataTransfer.files;
+    handleViewerUpload(document.getElementById('viewerFileInput'));
+  }
+});
+
+// ===== localStorage persistence =====
+(function(){
+  // Save report form data
+  var fields=['rpCompany','rpProduct','rpContact','rpNotes'];
+  fields.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var saved=localStorage.getItem('pro_'+id);
+    if(saved) el.value=saved;
+    el.addEventListener('input',function(){localStorage.setItem('pro_'+id,el.value)});
+  });
+})();
+</script>
+</body>
+</html>

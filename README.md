@@ -65,13 +65,47 @@ open index.html
 
 无需任何构建工具或依赖。
 
+### C2PA签名工具 (Pro版)
+
+`c2pa_signer.py` 是合规通Pro版核心功能，为图片嵌入C2PA Content Credentials manifest，声明AI生成内容来源。
+
+```bash
+# 安装依赖
+pip install c2pa-python cryptography pillow
+
+# 生成demo证书
+python c2pa_signer.py generate-cert
+
+# 签名图片（声明AI生成）
+python c2pa_signer.py sign input.jpg output_signed.jpg --ai-generated
+
+# 签名图片（声明AI增强）
+python c2pa_signer.py sign input.jpg output_signed.jpg --ai-enhanced
+
+# 验证已签名图片
+python c2pa_signer.py verify signed_image.jpg -v
+
+# 批量签名
+python c2pa_signer.py batch ./input_dir ./output_dir --ai-generated
+```
+
+签名后的图片包含：
+- `c2pa.actions.v2` -- 内容操作声明（AI生成/增强）
+- `cawg.training-mining` -- AI训练数据使用声明（notAllowed）
+- ES256加密签名 + 时间戳
+
+demo模式使用C2PA官方测试证书（仅供开发测试）。生产环境需替换为C2PA信任锚签发的正式证书。
+
 ## 项目结构
 
 ```
 hengan-compliance-check/
-  index.html    -- 主页面（合规自检工具 + 方案介绍 + FAQ）
-  README.md     -- 本文件
-  LICENSE       -- MIT 许可证
+  index.html        -- 主页面（合规自检工具 + 方案介绍 + FAQ）
+  c2pa_signer.py    -- C2PA签名工具（Pro版核心功能）
+  certs/            -- 证书目录
+    test_fixtures/  -- C2PA官方测试证书（demo模式）
+  README.md         -- 本文件
+  LICENSE           -- MIT 许可证
 ```
 
 ## 技术栈
@@ -79,8 +113,9 @@ hengan-compliance-check/
 | 层级 | 技术 |
 |------|------|
 | 前端 | 纯 HTML/CSS/JS |
+| 签名 | c2pa-python + cryptography |
 | 部署 | GitHub Pages |
-| C2PA | c2pa-js（浏览器端，计划集成） |
+| 证书 | C2PA测试证书(demo) / C2PA信任锚(生产) |
 | 成本 | 0元 |
 
 ## 路线图
@@ -90,6 +125,7 @@ hengan-compliance-check/
 | MVP v1.0 | 2026-07-01 | 合规自检工具 + 技术速查表 + 行为准则指南 |
 | v1.1 | 2026-07-08 | EU AI Act合规手册中文版 + 客户案例 |
 | v1.2 | 2026-07-15 | C2PA签名工具集成 + 合规报告生成器 |
+| v1.2a | 2026-06-28 | C2PA签名Python脚本(c2pa_signer.py)已完成 |
 | v2.0 | 2026-07-22 | ProductHunt正式发布 + 多语言支持 |
 
 ## 贡献
