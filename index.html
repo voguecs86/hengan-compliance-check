@@ -407,9 +407,25 @@ body {
   background: #eaf2fb;
 }
 
-.btn-sm {
-  padding: 8px 18px;
-  font-size: 13px;
+.tab-btn {
+  padding: 8px 20px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.tab-btn.active,
+.tab-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.tab-btn:focus {
+  outline: none;
 }
 
 /* Roadmap */
@@ -591,11 +607,58 @@ body {
     <h2 class="section-title">AI合规需求自检</h2>
     <p class="section-subtitle">回答以下5个问题，3分钟了解你的合规风险等级</p>
     
+    <!-- Tab Navigation -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="tab-btn active" data-tab="quiz" onclick="switchTab('quiz')">5题问卷</button>
+      <button class="tab-btn" data-tab="image" onclick="switchTab('image')">图片溯源检测</button>
+    </div>
+    
     <div class="card">
       <div class="progress-bar">
         <div class="fill" id="progressBar" style="width:0%"></div>
       </div>
-      <div id="questions"></div>
+      
+      <!-- Quiz Tab -->
+      <div id="tab-quiz">
+        <div id="questions"></div>
+      </div>
+      
+      <!-- Image Detection Tab -->
+      <div id="tab-image" style="display:none">
+        <div id="upload-area" style="text-align:center;padding:40px 20px;border:2px dashed var(--border);border-radius:12px;margin-bottom:20px;transition:all 0.3s" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('imageUpload').click()">
+          <div style="font-size:48px;margin-bottom:12px">&#x1F5BC;</div>
+          <h3 style="margin-bottom:8px">拖放图片到此处，或点击上传</h3>
+          <p style="color:var(--text-secondary);font-size:14px">支持 PNG、JPG、WEBP 格式</p>
+          <p style="color:var(--text-secondary);font-size:12px;margin-top:8px">自动检测 C2PA 签名 + SynthID 水印</p>
+          <input type="file" id="imageUpload" accept=".png,.jpg,.jpeg,.webp" style="display:none" onchange="handleImageUpload(event)">
+        </div>
+        
+        <div id="upload-progress" style="display:none;text-align:center;padding:20px">
+          <div style="font-size:24px;margin-bottom:10px">&#x23F3;</div>
+          <p>正在分析图片...</p>
+          <div class="progress-bar" style="margin-top:12px;height:8px">
+            <div class="fill" id="uploadProgressFill" style="width:0%;background:linear-gradient(90deg,var(--accent),#2980b9)"></div>
+          </div>
+        </div>
+        
+        <div id="image-results" class="results-panel" style="display:none">
+          <div class="result-banner" id="imageResultBanner">
+            <div class="level" id="imageResultLevel"></div>
+            <div class="score-big" id="imageResultScore"></div>
+            <div class="summary" id="imageResultSummary"></div>
+          </div>
+          
+          <div class="card">
+            <h3>&#x1F50D; 检测报告详情</h3>
+            <div id="detectionDetails" style="line-height:2"></div>
+          </div>
+          
+          <div style="text-align:center;margin-top:20px">
+            <button class="btn btn-outline" onclick="resetImageDetection()">检测新图片</button>
+            <button class="btn btn-primary" onclick="location.href='#solutions'" style="margin-left:10px">查看解决方案</button>
+          </div>
+        </div>
+      </div>
       
       <div class="results-panel" id="results">
         <div class="result-banner" id="resultBanner">
@@ -639,6 +702,16 @@ body {
         <div class="f-icon">&#x1F310;</div>
         <h4>c2pa-js 浏览器库</h4>
         <p>纯前端JavaScript库，在浏览器中读取C2PA manifest，无需后端部署。免费开源。</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">&#x1F4F0;</div>
+        <h4>SynthID 水印检测 (OpenAI)</h4>
+        <p>OpenAI 的 SynthID 隐式水印检测方案。2026年谷歌I/O宣布SynthID已为10亿张图片添加水印，Gemini平台广泛集成。支持图片、视频、音频全方位溯源。</p>
+      </div>
+      <div class="feature-card">
+        <div class="f-icon">&#x1F4CA;</div>
+        <h4>AI溯源方案对比表</h4>
+        <p>C2PA vs SynthID vs AudioSeal 横向对比，帮助你选择最适合的技术方案。含实施难度、成本、兼容性一览。</p>
       </div>
       <div class="feature-card">
         <div class="f-icon">&#x1F4CB;</div>
@@ -958,6 +1031,19 @@ function resetQuiz() {
 }
 
 renderQuestions();
+
+// Tab Navigation
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  document.getElementById('tab-quiz').style.display = tab === 'quiz' ? 'block' : 'none';
+  document.getElementById('tab-image').style.display = tab === 'image' ? 'block' : 'none';
+  document.getElementById('progressBar').style.display = tab === 'quiz' ? '' : 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('image-results').style.display = 'none';
+  document.getElementById('upload-area').style.display = '';
+}
 </script>
 </body>
 </html>
