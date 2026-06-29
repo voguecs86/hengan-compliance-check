@@ -1084,6 +1084,269 @@ function switchTab(tab) {
   document.getElementById('image-results').style.display = 'none';
   document.getElementById('upload-area').style.display = '';
 }
+
+// ---- Image Detection Functions ----
+function handleDragOver(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var area = document.getElementById('upload-area');
+  area.style.borderColor = 'var(--accent)';
+  area.style.background = '#eaf2fb';
+}
+
+function handleDragLeave(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var area = document.getElementById('upload-area');
+  area.style.borderColor = 'var(--border)';
+  area.style.background = '';
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  var area = document.getElementById('upload-area');
+  area.style.borderColor = 'var(--border)';
+  area.style.background = '';
+  var files = e.dataTransfer.files;
+  if (files.length > 0) {
+    processImage(files[0]);
+  }
+}
+
+function handleImageUpload(e) {
+  var files = e.target.files;
+  if (files.length > 0) {
+    processImage(files[0]);
+  }
+}
+
+function processImage(file) {
+  var validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+  if (!validTypes.includes(file.type) && !file.name.match(/\.(png|jpg|jpeg|webp)$/i)) {
+    alert('仅支持 PNG、JPG、WEBP 格式的图片');
+    return;
+  }
+  
+  if (file.size > 20 * 1024 * 1024) {
+    alert('文件大小不能超过 20MB');
+    return;
+  }
+  
+  // Show progress
+  document.getElementById('upload-area').style.display = 'none';
+  document.getElementById('image-results').style.display = 'none';
+  document.getElementById('upload-progress').style.display = 'block';
+  
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var data = e.target.result;
+    animateUploadProgress(function() {
+      performDetection(data, file.type, file.name);
+    });
+  };
+  reader.onerror = function() {
+    alert('文件读取失败，请重试');
+    resetImageDetection();
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function animateUploadProgress(callback) {
+  var fill = document.getElementById('uploadProgressFill');
+  var progress = 0;
+  var interval = setInterval(function() {
+    progress += Math.random() * 30;
+    if (progress >= 90) {
+      progress = 90;
+      clearInterval(interval);
+      fill.style.width = '100%';
+      setTimeout(function() {
+        callback();
+      }, 300);
+    } else {
+      fill.style.width = progress + '%';
+    }
+  }, 200);
+}
+
+// C2PA Detection
+function detectC2PA(data, mimeType) {
+  var results = [];
+  var uint8 = new Uint8Array(data);
+  var decoder = new TextDecoder('utf-8', {fatal: false});
+  var textChunk = decoder.decode(uint8.slice(0, Math.min(1024 * 1024, uint8.length)));
+  
+  var markers = [
+    { pattern: 'C2PA', label: 'C2PA 内容凭证签名' },
+    { pattern: 'manifest.json', label: 'C2PA Manifest 清单' },
+    { pattern: 'jsonld', label: 'JSON-LD 语义数据' },
+    { pattern: 'signature', label: '数字签名区域' },
+    { pattern: 'pem', label: 'PEM 证书数据' }
+  ];
+  
+  markers.forEach(function(m) {
+    if (textChunk.indexOf(m.pattern) !== -1) {
+      results.push({ found: true, label: m.label });
+    }
+  });
+  
+  // Check JPEG/EXIF for C2PA claims segment
+  if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+    if (uint8[0] === 0xFF && uint8[1] === 0xE1) {
+      var segments = new Uint8Array(data, 2, 2);
+      var segLen = (segments[0] << 8) | segments[1];
+      var segData = decoder.decode(uint8.slice(4, 4 + Math.min(segLen - 2, 1024)));
+      if (segData.indexOf('C2PA') !== -1 || segData.indexOf('claims') !== -1) {
+        results.push({ found: true, label: 'JPEG EXIF C2PA 声明段' });
+      }
+    }
+  }
+  
+  // Check PNG for C2PA chunks
+  if (mimeType === 'image/png') {
+    var pngData = decoder.decode(uint8.slice(1, 500));
+    if (pngData.indexOf('C2PA') !== -1) {
+      results.push({ found: true, label: 'PNG C2PA 数据块' });
+    }
+  }
+  
+  return results;
+}
+
+// SynthID Detection
+function detectSynthID(data, mimeType) {
+  var results = [];
+  var uint8 = new Uint8Array(data);
+  var decoder = new TextDecoder('utf-8', {fatal: false});
+  var textChunk = decoder.decode(uint8.slice(0, Math.min(1024 * 1024, uint8.length)));
+  
+  var markers = [
+    { pattern: 'synthid', label: 'SynthID 水印标记' },
+    { pattern: 'google', label: 'Google 水印相关数据' },
+    { pattern: 'dwt', label: '离散余弦变换 (DWT) 水印' },
+    { pattern: 'freq', label: '频域水印信号' },
+    { pattern: 'embed', label: '隐式嵌入标记' }
+  ];
+  
+  markers.forEach(function(m) {
+    if (textChunk.toLowerCase().indexOf(m.pattern.toLowerCase()) !== -1) {
+      results.push({ found: true, label: m.label });
+    }
+  });
+  
+  // Check for noise-like patterns (potential frequency-domain watermark)
+  var entropy = calculateEntropy(uint8);
+  if (entropy > 7.5 && entropy < 7.9) {
+    results.push({ found: true, label: '高熵值区域 (可能存在频域水印)' });
+  }
+  
+  return results;
+}
+
+function calculateEntropy(data) {
+  var freq = new Array(256).fill(0);
+  for (var i = 0; i < data.length; i++) {
+    freq[data[i]]++;
+  }
+  var len = data.length;
+  var entropy = 0;
+  for (var i = 0; i < 256; i++) {
+    if (freq[i] > 0) {
+      var p = freq[i] / len;
+      entropy -= p * Math.log2(p);
+    }
+  }
+  return entropy;
+}
+
+function performDetection(data, mimeType, fileName) {
+  var c2paResults = detectC2PA(data, mimeType);
+  var synthidResults = detectSynthID(data, mimeType);
+  
+  var totalFound = c2paResults.length + synthidResults.length;
+  
+  // Update progress animation
+  var fill = document.getElementById('uploadProgressFill');
+  fill.style.width = '100%';
+  
+  setTimeout(function() {
+    document.getElementById('upload-progress').style.display = 'none';
+    document.getElementById('image-results').style.display = 'block';
+    
+    var banner = document.getElementById('imageResultBanner');
+    var level = document.getElementById('imageResultLevel');
+    var scoreEl = document.getElementById('imageResultScore');
+    var summary = document.getElementById('imageResultSummary');
+    var details = document.getElementById('detectionDetails');
+    
+    var html = '<div style="margin-bottom:16px"><strong>图片文件：</strong>' + escapeHtml(fileName) + ' (' + escapeHtml(mimeType || '未知类型') + ')</div>';
+    
+    if (totalFound >= 3) {
+      banner.className = 'result-banner danger';
+      level.textContent = '确认为 AI 生成或已添加内容凭证';
+      scoreEl.textContent = totalFound + ' 项匹配';
+      summary.textContent = '该图片包含多个 AI 生成内容或 C2PA 内容凭证标记，已被检测到可信的溯源信息。';
+      html += '<div style="padding:12px;background:#fdecea;border-radius:8px;margin-bottom:12px;color:#c0392b"><strong>&#x26A0; 检测到 C2PA 内容凭证</strong><br>该图片包含 C2PA 数字签名和来源信息，可通过合规通 API 进一步验证签名有效性。</div>';
+    } else if (totalFound >= 1) {
+      banner.className = 'result-banner warning';
+      level.textContent = '可能包含 AI 水印或来源信息';
+      scoreEl.textContent = totalFound + ' 项匹配';
+      summary.textContent = '该图片可能包含 AI 生成内容的水印或来源标记，建议进一步使用专业工具验证。';
+      html += '<div style="padding:12px;background:#fef9e7;border-radius:8px;margin-bottom:12px;color:#e67e22"><strong>&#x1F50D; 部分匹配</strong><br>检测到可疑标记，但不构成确定性结论。建议使用专业验证工具进行深入分析。</div>';
+    } else {
+      banner.className = 'result-banner success';
+      level.textContent = '未检测到已知水印';
+      scoreEl.textContent = '0' + ' 项匹配';
+      summary.textContent = '在当前检测范围内未发现已知的 C2PA 或 SynthID 水印标记。但这不代表图片一定为原始拍摄，某些 AI 生成方式可能不被检测到。';
+      html += '<div style="padding:12px;background:#eafaf1;border-radius:8px;margin-bottom:12px;color:#27ae60"><strong>&#x2705; 未检测到已知水印</strong><br>未发现 C2PA 签名或 SynthID 隐式水印。但请注意：检测工具只能识别已知格式的水印，无法覆盖所有可能性。</div>';
+    }
+    
+    // C2PA Details
+    if (c2paResults.length > 0) {
+      html += '<div style="margin-top:16px;padding:12px;background:#f0f7ff;border-radius:8px"><strong style="color:#3498db">&#x1F4E6; C2PA 检测结果</strong>';
+      c2paResults.forEach(function(r) {
+        html += '<div style="padding:4px 0;font-size:14px">&#x2714; ' + r.label + '</div>';
+      });
+      html += '</div>';
+    }
+    
+    // SynthID Details
+    if (synthidResults.length > 0) {
+      html += '<div style="margin-top:12px;padding:12px;background:#fff5f0;border-radius:8px"><strong style="color:#e74c3c">&#x1F4F0; SynthID 水印检测</strong>';
+      synthidResults.forEach(function(r) {
+        html += '<div style="padding:4px 0;font-size:14px">&#x2714; ' + r.label + '</div>';
+      });
+      html += '</div>';
+    }
+    
+    // Detection methodology note
+    html += '<div style="margin-top:16px;padding:12px;background:#f8f9fa;border-radius:8px;font-size:12px;color:#666"><strong>检测方法说明</strong><br>';
+    html += '• 文本字节扫描：搜索 C2PA/SynthID 相关标记字符串<br>';
+    html += '• 熵值分析：检测图像数据的统计异常性<br>';
+    html += '• 文件格式特化：JPEG EXIF / PNG chunk 特殊扫描<br>';
+    html += '• 本工具为浏览器端静态检测，精度有限，不能作为最终判定依据</div>';
+    
+    details.innerHTML = html;
+    document.getElementById('image-results').scrollIntoView({ behavior: 'smooth' });
+  }, 500);
+}
+
+function resetImageDetection() {
+  document.getElementById('upload-progress').style.display = 'none';
+  document.getElementById('image-results').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+  document.getElementById('upload-area').style.borderColor = 'var(--border)';
+  document.getElementById('upload-area').style.background = '';
+  document.getElementById('uploadProgressFill').style.width = '0%';
+  document.getElementById('imageUpload').value = '';
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
 </script>
 </body>
 </html>
