@@ -620,7 +620,138 @@ python c2pa_signer.py batch ./images ./signed_output --ai-generated
           <strong style="color:#2980b9">&#x1F3A4; 预览版：免费试用C2PA签名</strong><br>
           Pro版客户可以免费试用以上3种验证方式。推荐优先使用方案B（合规通首页在线检测），零门槛、即时出结果。
         </div>
-        <p style="color:#94a3b8;font-size:13px;margin-top:8px">开源地址: <a href="https://github.com/contentauth/c2pa-js">c2pa-js GitHub</a> | 许可: Apache 2.0</p>
+      </div>
+    </div>
+
+    <!-- Tab: Service Flow -->
+    <div class="tab-panel" id="panel-service">
+      <h3 style="font-size:22px;margin-bottom:8px;color:var(--primary);text-align:center">售前 → 售中 → 售后 全流程服务</h3>
+      <p style="font-size:15px;color:var(--text-secondary);margin-bottom:32px;text-align:center">客户从接触合规通到持续使用的完整服务链路，每一步都有明确的交付物和沟通方式。</p>
+
+      <!-- Step 1: 售前 -->
+      <div style="margin-bottom:32px">
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">&#x1F4E3; 第一步：售前咨询（0费用）</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#f0f7ff;border:1px solid #3498db;border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:#2980b9">客户怎么找到我？</strong>
+            <ul style="padding-left:18px;font-size:14px;color:#1a5276;margin-top:8px;line-height:2">
+              <li>免费版首页的"图片溯源检测"功能发现价值</li>
+              <li>首页 CTA 按钮"查看解决方案" → 跳转到 Pro 版</li>
+              <li>Pro 版"联系咨询"按钮直接打开微信或发邮件</li>
+              <li>即刻/V2EX 等社交平台的内容传播</li>
+            </ul>
+          </div>
+          <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:var(--primary)">我方交付什么？</strong>
+            <ul style="padding-left:18px;font-size:14px;color:var(--text-secondary);margin-top:8px;line-height:2">
+              <li>通过微信/邮件后，自动发送欢迎语+服务说明</li>
+              <li>根据客户行业推荐最适合的方案（99元 或 299元）</li>
+              <li>明确告知：支持微信支付/支付宝转账</li>
+              <li>不强迫付费，先让客户体验免费工具建立信任</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 支付与开通 -->
+      <div style="margin-bottom:32px">
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">&#x1F4B0; 第二步：支付与开通</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#f0fdf4;border:1px solid #2ecc71;border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:#065f46">付款方式</strong>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+              <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-size:24px;margin-bottom:4px">&#x1F4E3;</div>
+                <strong style="font-size:13px">微信支付</strong>
+                <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">扫码付款或转账</p>
+                <p style="font-size:11px;color:#e74c3c;font-weight:600;margin-top:2px">推荐方式</p>
+              </div>
+              <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center">
+                <div style="font-size:24px;margin-bottom:4px">&#x1F4E5;</div>
+                <strong style="font-size:13px">支付宝</strong>
+                <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">转账到指定账户</p>
+              </div>
+            </div>
+          </div>
+          <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:var(--primary)">交付内容</strong>
+            <ul style="padding-left:18px;font-size:14px;color:var(--text-secondary);margin-top:8px;line-height:2">
+              <li>收款确认后，发送 GitHub 仓库访问链接</li>
+              <li>内含 c2pa_signer.py、demo 证书、使用说明</li>
+              <li>提供 1对1 微信指导，帮客户完成首次签名</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: 售中 -->
+      <div style="margin-bottom:32px">
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">&#x2699;&#xFE0F; 第三步：使用中服务</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#fffbeb;border:1px solid #f39c12;border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:#7d6608">Pro 版客户（99元/月）</strong>
+            <ul style="padding-left:18px;font-size:14px;color:#7d6608;margin-top:8px;line-height:2">
+              <li><strong>技术指导：</strong>微信随时提问，远程协助 c2pa_signer.py 运行</li>
+              <li><strong>合规建议：</strong>针对客户产品场景给出具体方案</li>
+              <li><strong>月度报告审查：</strong>客户提交报告，我帮忙审核修改</li>
+              <li><strong>批量签名支持：</strong>超 50 张图远程代操</li>
+              <li><strong>法规更新通知：</strong>EU AI Act 细则变更第一时间推送</li>
+            </ul>
+          </div>
+          <div style="background:#fdf2f8;border:1px solid #e74c3c;border-radius:12px;padding:20px">
+            <strong style="font-size:14px;color:#972668">企业版客户（299元/月）</strong>
+            <ul style="padding-left:18px;font-size:14px;color:#972668;margin-top:8px;line-height:2">
+              <li>Pro 版全部服务</li>
+              <li><strong>API 定制集成：</strong>帮客户将 C2PA 集成到自有系统</li>
+              <li><strong>SLA 保障：</strong>紧急问题 2 小时内响应</li>
+              <li><strong>季度审查：</strong>每季度一次合规状态复盘</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4: 售后 -->
+      <div style="margin-bottom:32px">
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">&#x1F504; 第四步：售后维护</h4>
+        <div style="background:#f8f9fa;border:1px solid var(--border);border-radius:12px;padding:20px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+            <div>
+              <strong style="font-size:14px">&#x1F514; 续约提醒</strong>
+              <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">到期前 7 天微信提醒续费</p>
+            </div>
+            <div>
+              <strong style="font-size:14px">&#x1F512; 证书更新</strong>
+              <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">C2PA 证书过期自动通知并协助更换</p>
+            </div>
+            <div>
+              <strong style="font-size:14px">&#x1F680; 功能迭代</strong>
+              <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">新版本工具更新时通知客户升级</p>
+            </div>
+            <div>
+              <strong style="font-size:14px">&#x1F91D; 转介绍奖励</strong>
+              <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">老客户推荐新客户，双方各得 1 个月免费</p>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding:12px;background:#eafaf1;border-radius:8px;font-size:13px;color:#065f46">
+            <strong>&#x2705; 取消随时退：</strong>客户可随时取消续订，已支付月份的服务照旧。无任何隐藏费用、自动扣款或隐形条款。
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: 客户使用流程 -->
+      <div>
+        <h4 style="font-size:18px;color:var(--primary);margin-bottom:12px">&#x1F9EA; 第五步：客户实际操作流程（7步）</h4>
+        <div style="background:#f0f7ff;border:1px solid #3498db;border-radius:12px;padding:20px">
+          <ol style="padding-left:20px;font-size:14px;line-height:2.4">
+            <li>下载 GitHub 仓库中的 <code style="background:#1e293b;color:#7dd3fc;padding:2px 6px;border-radius:4px;font-size:12px">c2pa_signer.py</code> 和 <code style="background:#1e293b;color:#7dd3fc;padding:2px 6px;border-radius:4px;font-size:12px">certs/</code></li>
+            <li>安装依赖：<code style="background:#1e293b;color:#7dd3fc;padding:2px 6px;border-radius:4px;font-size:12px">pip install c2pa-python cryptography</code></li>
+            <li>运行签名命令：<code style="background:#1e293b;color:#7dd3fc;padding:2px 6px;border-radius:4px;font-size:12px">python c2pa_signer.py sign input.jpg output.jpg --ai-generated --demo</code></li>
+            <li>用以上 3 种方案之一验证签名是否生效（详见下方说明）</li>
+            <li>使用合规报告生成器填入公司信息，生成报告</li>
+            <li>报告打印或保存 PDF，用于内部存档或监管提交</li>
+            <li>持续使用，有疑问随时微信找我</li>
+          </ol>
+        </div>
       </div>
     </div>
 
