@@ -597,17 +597,29 @@ python c2pa_signer.py batch ./images ./signed_output --ai-generated
 
       <!-- Browser-based c2pa-js reference -->
       <div class="cli-guide" style="margin-top:24px">
+        <h4>&#x2705; 如何验证签名是否生效？</h4>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px">签名完成后，验证是关键。以下是推荐的验证方式：</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:20px">
+          <div style="background:#f0f7ff;border:1px solid #3498db;border-radius:8px;padding:14px">
+            <strong style="font-size:14px;color:#2980b9">&#x1F5BC;&#xFE0F; 方案A - 右键查看（最简）</strong>
+            <p style="font-size:13px;color:#1a5276;margin-top:6px">Windows：右键签名图片 → 属性 → 详细信息 → 查看"数字签名"标签页<br>Mac：双击图片预览 → 右上角"信息"图标</p>
+          </div>
+          <div style="background:#f0fdf4;border:1px solid #2ecc71;border-radius:8px;padding:14px">
+            <strong style="font-size:14px;color:#065f46">&#x1F310; 方案B - 在线检测（推荐）</strong>
+            <p style="font-size:13px;color:#065f46;margin-top:6px">用你的浏览器打开 <a href="https://voguecs86.github.io/hengan-compliance-check/" target="_blank" style="color:#27ae60;font-weight:600">合规通首页</a>，切换到"图片溯源检测"Tab，拖放签名后的图片</p>
+          </div>
+          <div style="background:#fef9e7;border:1px solid #f39c12;border-radius:8px;padding:14px">
+            <strong style="font-size:14px;color:#7d6608">&#x1F4AC; 方案C - 远程人工协助</strong>
+            <p style="font-size:13px;color:#7d6608;margin-top:6px">微信截图发给我，我用专业工具远程验证。适合需要确认签名的客户。</p>
+          </div>
+        </div>
         <h4>&#x1F310; 浏览器端C2PA读取 (c2pa-js)</h4>
         <p style="color:#94a3b8;font-size:13px;margin-bottom:12px">开源c2pa-js库可在浏览器中直接读取C2PA manifest，无需后端。Pro版后续版本将集成此功能实现纯前端解析。</p>
-        <pre>
-// c2pa-js 浏览器端读取manifest（即将集成）
-import { C2PA } from 'c2pa-js';
-
-const c2pa = new C2PA();
-const result = await c2pa.read(imageFile);
-console.log(result.manifest);
-console.log(result.validationState); // "trusted" / "untrusted"
-        </pre>
+        <p style="color:#94a3b8;font-size:13px;margin-top:8px">开源地址: <a href="https://github.com/contentauth/c2pa-js">c2pa-js GitHub</a> | 许可: Apache 2.0</p>
+        <div style="margin-top:16px;padding:14px;background:#eaf2fb;border:1px solid #3498db;border-radius:8px;font-size:13px;color:#1a5276">
+          <strong style="color:#2980b9">&#x1F3A4; 预览版：免费试用C2PA签名</strong><br>
+          Pro版客户可以免费试用以上3种验证方式。推荐优先使用方案B（合规通首页在线检测），零门槛、即时出结果。
+        </div>
         <p style="color:#94a3b8;font-size:13px;margin-top:8px">开源地址: <a href="https://github.com/contentauth/c2pa-js">c2pa-js GitHub</a> | 许可: Apache 2.0</p>
       </div>
     </div>
@@ -646,7 +658,7 @@ console.log(result.validationState); // "trusted" / "untrusted"
             <li>法规更新推送</li>
             <li>邮件支持</li>
           </ul>
-          <a href="mailto:hengan-ai@proton.me?subject=合规通Pro版咨询" class="cta-btn primary">联系咨询</a>
+          <a href="mailto:hengan86@163.com?subject=合规通Pro版咨询" class="cta-btn primary">联系咨询</a>
         </div>
 
         <div class="pricing-card">
@@ -661,7 +673,7 @@ console.log(result.validationState); // "trusted" / "untrusted"
             <li>定制合规方案</li>
             <li>专属合规顾问</li>
           </ul>
-          <a href="mailto:hengan-ai@proton.me?subject=合规通Enterprise版咨询" class="cta-btn outline">联系咨询</a>
+          <a href="mailto:hengan86@163.com?subject=合规通Enterprise版咨询" class="cta-btn outline">联系咨询</a>
         </div>
       </div>
 
@@ -689,7 +701,7 @@ console.log(result.validationState); // "trusted" / "untrusted"
 <div class="footer">
   <div class="container">
     <p><strong>衡安AI合规通 Pro</strong> (HengAn AI Compliance Pass Pro)</p>
-    <p>由衡安AI团队开发 | 联系: <a href="mailto:hengan-ai@proton.me">hengan-ai@proton.me</a></p>
+    <p>由衡安AI团队开发 | 联系微信: <strong>VOGUECS</strong> ｜ 邮箱 <a href="mailto:hengan86@163.com">hengan86@163.com</a></p>
     <p style="margin-top:8px;color:#94a3b8;font-size:12px">
       本工具为信息参考与技术辅助工具，不构成法律建议。具体合规决策请咨询专业法律顾问。<br>
       C2PA签名功能基于开源c2pa-python库(Apache 2.0)。Demo证书仅用于测试，生产环境需替换为正式信任锚证书。<br>
