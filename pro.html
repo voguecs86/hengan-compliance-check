@@ -292,6 +292,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
     <button class="tab-btn" onclick="switchTab('sign')">C2PA签名</button>
     <button class="tab-btn" onclick="switchTab('report')">合规报告</button>
     <button class="tab-btn" onclick="switchTab('viewer')">Manifest查看</button>
+    <button class="tab-btn" onclick="switchTab('service')">服务流程</button>
     <button class="tab-btn" onclick="switchTab('pricing')">定价升级</button>
   </div>
 
@@ -321,6 +322,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica N
           <div class="ov-icon">&#x1F4DD;</div>
           <h4>行为准则签署模板</h4>
           <p>7月22日前签署EU AI透明度行为准则的完整承诺书模板+透明度措施说明模板。签署后获合规推定保护。</p>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon">&#x1F4AC;</div>
+          <h4>微信一对一服务</h4>
+          <p>购买前有咨询、购买中有指导、购买后有支持。全程微信沟通，无需排队。添加微信 VOGUECS 即可开始专业服务。</p>
         </div>
       </div>
 
@@ -672,7 +678,10 @@ console.log(result.validationState); // "trusted" / "untrusted"
   <div class="container">
     <h2>8月2日前，确保你的AI产品合规</h2>
     <p>C2PA签名 + 合规报告 + 行为准则签署。一站式完成EU AI Act合规的最后一步。</p>
-    <a href="mailto:hengan-ai@proton.me?subject=合规通Pro版咨询" class="cta-btn-white">立即咨询Pro版</a>
+    <a href="mailto:hengan86@163.com?subject=合规通Pro版咨询" class="cta-btn-white">立即咨询Pro版</a>
+    <p style="margin-top:16px;font-size:14px;opacity:0.85">
+      或直接添加微信 <strong style="color:#fff">VOGUECS</strong> 获得一对一专业服务
+    </p>
   </div>
 </section>
 
@@ -684,6 +693,7 @@ console.log(result.validationState); // "trusted" / "untrusted"
     <p style="margin-top:8px;color:#94a3b8;font-size:12px">
       本工具为信息参考与技术辅助工具，不构成法律建议。具体合规决策请咨询专业法律顾问。<br>
       C2PA签名功能基于开源c2pa-python库(Apache 2.0)。Demo证书仅用于测试，生产环境需替换为正式信任锚证书。<br>
+      联系微信: VOGUECS | 邮箱: hengan86@163.com<br>
       &copy; 2026 衡安AI | <a href="https://github.com/voguecs86/hengan-compliance-check">GitHub</a> | <a href="index.html">免费版</a>
     </p>
   </div>
@@ -711,7 +721,7 @@ function switchTab(name){
   document.querySelector('#panel-'+name).classList.add('active');
   // find correct tab-btn
   var btns=document.querySelectorAll('.tab-btn');
-  var map={overview:0,sign:1,report:2,viewer:3,pricing:4};
+  var map={overview:0,sign:1,report:2,viewer:3,service:4,pricing:5};
   if(map[name]!==undefined) btns[map[name]].classList.add('active');
 }
 
