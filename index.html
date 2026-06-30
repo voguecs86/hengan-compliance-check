@@ -764,64 +764,68 @@ body {
       <div class="roadmap-item">
         <div class="week-badge">第1周<br>7/1 - 7/7</div>
         <div class="week-content">
-          <strong>基础建设</strong>
+          <strong>盘点与评估</strong>
           <ul>
-            <li>合规自检工具HTML版上线</li>
-            <li>合规需求评估问卷</li>
-            <li>行为准则签署指南</li>
-            <li>技术选型速查表</li>
+            <li>盘点产品中所有AI生成内容触点（图片/视频/音频/文本）</li>
+            <li>确认产品面向欧盟用户的范围和规模</li>
+            <li>详细阅读EU AI Act第50条核心要求</li>
+            <li>建立内部合规小组，明确责任人</li>
           </ul>
         </div>
       </div>
       <div class="roadmap-item">
         <div class="week-badge">第2周<br>7/8 - 7/14</div>
         <div class="week-content">
-          <strong>内容完善</strong>
+          <strong>签署行为准则 + 技术选型</strong>
           <ul>
-            <li>EU AI Act 合规手册中文版</li>
-            <li>3个行业客户场景案例</li>
-            <li>ProductHunt发布准备</li>
+            <li>7月22日前签署EU AI透明度行为准则（获取合规推定保护）</li>
+            <li>评估技术方案：C2PA签名 vs SynthID水印 vs AudioSeal</li>
+            <li>确定标注策略：前端UI标识 + API元数据 + 导出文件标识</li>
+            <li>准备多语言用户通知模板</li>
           </ul>
         </div>
       </div>
       <div class="roadmap-item">
         <div class="week-badge">第3周<br>7/15 - 7/21</div>
         <div class="week-content">
-          <strong>增强功能</strong>
+          <strong>标注实施</strong>
           <ul>
-            <li>C2PA签名工具Python版</li>
-            <li>合规报告生成器</li>
-            <li>7月22日前灰度发布</li>
+            <li>前端UI：在所有AI内容旁添加"AI生成"标识</li>
+            <li>API层：在响应头中添加 x-ai-generated 元数据</li>
+            <li>导出文件：在文件元数据中标注AI来源信息</li>
+            <li>确认行为准则已签署（7月22日截止）</li>
           </ul>
         </div>
       </div>
       <div class="roadmap-item">
         <div class="week-badge">第4周<br>7/22 - 7/28</div>
         <div class="week-content">
-          <strong>获客推广</strong>
+          <strong>C2PA签名集成</strong>
           <ul>
-            <li>ProductHunt正式发布</li>
-            <li>出海社群/跨境电商推广</li>
-            <li>首周数据复盘</li>
+            <li>集成C2PA SDK到AI内容生成流水线</li>
+            <li>获取C2PA签名证书（可联系衡安AI获取测试证书）</li>
+            <li>端到端测试：生成内容 -> 嵌入签名 -> 验证签名</li>
+            <li>编写内部合规操作手册</li>
           </ul>
         </div>
       </div>
       <div class="roadmap-item">
         <div class="week-badge">第5周<br>7/29 - 8/2</div>
         <div class="week-content">
-          <strong>冲刺收官</strong>
+          <strong>上线与收尾</strong>
           <ul>
-            <li>8月2日前最后一波推广</li>
-            <li>客户反馈收集+快速迭代</li>
-            <li>合规倒计时归零事件营销</li>
+            <li>全面回归测试，确保所有AI内容合规标注</li>
+            <li>向用户发送多语言合规通知邮件</li>
+            <li>8月2日全量上线合规方案</li>
+            <li>建立持续合规监控机制，应对后续细则更新</li>
           </ul>
         </div>
       </div>
       <p style="text-align:center; margin-top:20px; font-size:13px; color:var(--danger); font-weight:600">
-        全部零成本：GitHub Pages免费托管 + 开源C2PA库 + 无需任何付费服务
+        以上方案全部零成本可执行：使用免费开源工具 + 无需任何付费服务
       </p>
       <p style="text-align:center; margin-top:16px; font-size:14px; color:var(--text-secondary); line-height:1.8">
-        不要让繁杂的 PKI 证书、密钥库管理和合规审计拖慢您的产品上线。<br>
+        如需加速合规进程，不想自行管理 PKI 证书、密钥库和合规审计？<br>
         <strong style="color:var(--accent)">联系衡安AI</strong>，获取 C2PA 测试证书、API 接入文档以及完整的技术支持。<br>
         微信：VOGUECS ｜ 邮箱：hengan86@163.com
       </p>
