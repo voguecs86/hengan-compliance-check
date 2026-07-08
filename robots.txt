@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://voguecs86.github.io/hengan-compliance-check/sitemap.xml

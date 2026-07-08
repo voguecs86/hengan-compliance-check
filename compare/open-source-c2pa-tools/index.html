@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开源 C2PA 工具对比：c2patool / c2pa-python / c2pa-js</title>
+<meta name="description" content="三款主流开源 C2PA 工具对比：适用场景、语言、部署方式，帮你快速选型。">
+<link rel="canonical" href="https://voguecs86.github.io/hengan-compliance-check/compare/open-source-c2pa-tools/">
+<meta property="og:title" content="开源 C2PA 工具对比：c2patool / c2pa-python / c2pa-js">
+<meta property="og:description" content="三款主流开源 C2PA 工具对比：适用场景、语言、部署方式，帮你快速选型。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://voguecs86.github.io/hengan-compliance-check/compare/open-source-c2pa-tools/">
+<meta property="og:image" content="https://voguecs86.github.io/hengan-compliance-check/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "开源 C2PA 工具对比：c2patool / c2pa-python / c2pa-js", "description": "三款主流开源 C2PA 工具对比：适用场景、语言、部署方式，帮你快速选型。", "url": "https://voguecs86.github.io/hengan-compliance-check/compare/open-source-c2pa-tools/"}</script>
+<style>
+:root{--primary:#1a1a2e;--accent:#3498db;--bg:#f5f7fa;--card:#fff;--text:#1a1a2e;--sec:#666;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:16px}
+.container{max-width:860px;margin:0 auto;padding:0 20px}
+ header{background:linear-gradient(135deg,#1a1a2e,#0f3460);color:#fff;padding:40px 0 32px}
+ header h1{font-size:30px;font-weight:800;margin-bottom:10px}
+ header .sub{opacity:.85;font-size:15px}
+ main{padding:32px 0}
+ h2{font-size:22px;margin:28px 0 12px;color:var(--primary)}
+ h3{font-size:18px;margin:20px 0 8px}
+ p{margin:12px 0;color:#2a2a3a}
+ ul{margin:12px 0 12px 22px}
+ li{margin:8px 0}
+ .card{background:var(--card);border:1px solid #e0e0e0;border-radius:var(--radius);padding:20px 22px;margin:16px 0;box-shadow:var(--shadow)}
+ .cta{background:linear-gradient(135deg,#16213e,#0f3460);color:#fff;border-radius:var(--radius);padding:24px;margin:28px 0;text-align:center}
+ .cta a{color:#7fd1ff;font-weight:700;text-decoration:none}
+ .related{margin:24px 0}
+ .related a{display:inline-block;background:#eef4fb;color:var(--accent);padding:6px 12px;border-radius:8px;margin:4px 6px 4px 0;text-decoration:none;font-size:14px}
+ .back{display:inline-block;margin:18px 0;color:var(--accent);text-decoration:none;font-weight:600}
+ footer{text-align:center;color:var(--sec);font-size:13px;padding:24px 0;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header><div class="container"><h1>开源 C2PA 工具对比：c2patool / c2pa-python / c2pa-js</h1><div class="sub">衡安AI合规通 · 免费 EU AI Act 合规自检</div></div></header>
+<main class="container">
+<div class="card"><table style="width:100%;border-collapse:collapse"><tr><th style="text-align:left;padding:8px;border-bottom:2px solid #3498db">c2patool</th><th style="text-align:left;padding:8px;border-bottom:2px solid #3498db">c2pa-python / c2pa-js</th><th style="text-align:left;padding:8px;border-bottom:2px solid #3498db">维度</th></tr><tr><td style="padding:8px;border-bottom:1px solid #eee">命令行工具</td><td style="padding:8px;border-bottom:1px solid #eee">Python 绑定 / 浏览器 JS 库</td><td style="padding:8px;border-bottom:1px solid #eee;color:#666">形态</td></tr><tr><td style="padding:8px;border-bottom:1px solid #eee">批量处理已有文件</td><td style="padding:8px;border-bottom:1px solid #eee">集成到后端 / 前端实时读取</td><td style="padding:8px;border-bottom:1px solid #eee;color:#666">适用</td></tr><tr><td style="padding:8px;border-bottom:1px solid #eee">本地或 CI 运行</td><td style="padding:8px;border-bottom:1px solid #eee">服务端 SDK / 纯前端无后端</td><td style="padding:8px;border-bottom:1px solid #eee;color:#666">部署</td></tr><tr><td style="padding:8px;border-bottom:1px solid #eee">低，会命令行即可</td><td style="padding:8px;border-bottom:1px solid #eee">需开发集成</td><td style="padding:8px;border-bottom:1px solid #eee;color:#666">门槛</td></tr></table></div><div class="card"><h2>结论</h2><p>已有文件批量签名用 c2patool；Web 后端集成用 c2pa-python；前端展示溯源用 c2pa-js。合规通 Pro 提供一键 API 免去自管证书。</p></div><div class="cta"><h2 style="color:#fff;margin-bottom:8px">不确定怎么选？</h2>
+<p style="color:#cfe6ff">联系 衡安AI合规通，按你的技术栈给选型建议与免费接入文档。</p>
+<p>微信 <a href="#">VOGUECS</a> ｜ 邮箱 <a href="mailto:hengan86@163.com">hengan86@163.com</a></p></div><div class="related"><h3>相关合规资源</h3><a href="https://voguecs86.github.io/hengan-compliance-check/glossary/c2pa/">https://voguecs86.github.io/hengan-compliance-check/glossary/c2pa/</a><a href="https://voguecs86.github.io/hengan-compliance-check/guide/saas/">https://voguecs86.github.io/hengan-compliance-check/guide/saas/</a><a href="https://voguecs86.github.io/hengan-compliance-check/compare/c2pa-vs-synthid/">https://voguecs86.github.io/hengan-compliance-check/compare/c2pa-vs-synthid/</a></div>
+<a class="back" href="https://voguecs86.github.io/hengan-compliance-check/">← 返回 衡安AI合规通 首页做免费自检</a>
+</main>
+<footer><div class="container">© 2026 衡安AI合规通 · 零成本开源合规方案 · 微信 VOGUECS · 邮箱 hengan86@163.com</div></footer>
+</body>
+</html>
