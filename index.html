@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="衡安AI合规通 - 面向中国出海企业的免费AI合规自检工具。5分钟了解你的产品是否需要EU AI Act合规。C2PA签名、行为准则签署、合规报告一站式方案。">
-<meta name="keywords" content="EU AI Act, C2PA, AI合规, 出海合规, AI内容标识, 衡安AI">
+<meta name="keywords" content="EU AI Act, C2PA, AI合规, 出海合规, AI内容标识, 国内AI标识合规, 智能信息服务, 衡安AI">
 <meta property="og:title" content="衡安AI合规通 - 免费AI合规自检工具">
 <meta property="og:description" content="8月2日EU AI Act强制执行，你的AI产品准备好了吗？5分钟免费自检。">
 <meta property="og:type" content="website">
@@ -671,7 +671,8 @@ body {
     
     <!-- Tab Navigation -->
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button class="tab-btn active" data-tab="quiz" onclick="switchTab('quiz')">5题问卷</button>
+      <button class="tab-btn active" data-tab="quiz" onclick="switchTab('quiz')">EU自检·5题</button>
+      <button class="tab-btn" data-tab="domestic" onclick="switchTab('domestic')">国内自检·5题</button>
       <button class="tab-btn" data-tab="image" onclick="switchTab('image')">图片溯源检测</button>
     </div>
     
@@ -683,6 +684,30 @@ body {
       <!-- Quiz Tab -->
       <div id="tab-quiz">
         <div id="questions"></div>
+      </div>
+      
+      <!-- Domestic Tab -->
+      <div id="tab-domestic" style="display:none">
+        <p style="text-align:center;color:var(--text-secondary);font-size:14px;margin-bottom:16px">国内《互联网信息服务管理办法（修订草案）》"智能信息服务"专章 · 意见反馈截止 <strong style="color:var(--danger)">2026-8-2</strong></p>
+        <div class="progress-bar">
+          <div class="fill" id="domesticProgress" style="width:0%"></div>
+        </div>
+        <div id="domesticQuestions"></div>
+        <div class="results-panel" id="domesticResults">
+          <div class="result-banner" id="domesticBanner">
+            <div class="level" id="domesticLevel"></div>
+            <div class="score-big" id="domesticScore"></div>
+            <div class="summary" id="domesticSummary"></div>
+          </div>
+          <div class="card">
+            <h3>&#x2705; 国内合规行动清单</h3>
+            <div class="action-list" id="domesticChecklist"></div>
+          </div>
+          <div style="text-align:center; margin-top:20px">
+            <button class="btn btn-outline" onclick="resetDomestic()">重新评估</button>
+            <button class="btn btn-primary" onclick="location.href='#solutions'" style="margin-left:10px">查看解决方案</button>
+          </div>
+        </div>
       </div>
       
       <!-- Image Detection Tab -->
@@ -1115,6 +1140,129 @@ function resetQuiz() {
 }
 
 renderQuestions();
+renderDomesticQuestions();
+
+// ---- Domestic (国内AI标识合规) Quiz ----
+var maxDomestic = 19;
+var domesticQuestions = [
+  {id:1, q:'你的产品/业务是否使用AI生成文字、图片、音频或视频内容并对外发布？',
+   opts:['是，大量使用','是，少量使用','否，不对外发布AI内容'], weights:[3,2,0],
+   tips:['你属于规范范围，需完成AI内容标识合规。','你属于规范范围，需完成AI内容标识合规。','暂不在生成合成内容规范范围，国内标识项可跳过。']},
+  {id:2, q:'你产出的AI图文/视频，是否带有"AI生成"标识？',
+   opts:['有显式标识+元数据','仅有可见角标','完全没有标识'], weights:[0,3,5],
+   tips:['很好，符合标识义务要求。','不够，建议补充机器可读元数据（内容凭证思路可复用）。','高风险！8月2日后未标识将面临合规风险，需立即整改。']},
+  {id:3, q:'你是否使用过"去水印""隐标识"类工具处理AI内容？',
+   opts:['从未使用','偶尔使用','经常使用'], weights:[0,3,5],
+   tips:['合规，未触碰禁止行为红线。','需注意，去除/隐匿标识属明确禁止行为，建议停用。','高风险！去除、隐匿AI标识是明确禁止行为，须立即停止。']},
+  {id:4, q:'你是否提供算法推荐/智能排序服务（信息流、猜你喜欢等）？',
+   opts:['是，主要业务','是，部分功能','否'], weights:[3,2,0],
+   tips:['需建立用户自主选择机制，提供"关闭个性化推荐"开关。','需提供关闭/调权入口，不默认强制AI排序。','无需算法推荐合规项，本项无风险。']},
+  {id:5, q:'你是否公示了AI技术的原理、运行机制与训练数据来源？',
+   opts:['已公示','部分公示','未公示'], weights:[0,2,3],
+   tips:['很好，满足技术信息公示要求。','建议补全训练数据来源等关键信息公示。','建议尽快在官网/产品页加"AI技术说明"区块。']}
+];
+
+var domesticAnswers = {};
+var domesticScore = 0;
+
+function renderDomesticQuestions() {
+  var container = document.getElementById('domesticQuestions');
+  var html = '';
+  domesticQuestions.forEach(function(q) {
+    html += '<div class="question-item" id="dq' + q.id + '">';
+    html += '<div class="q-header">' + q.id + '. ' + q.q + '</div>';
+    html += '<div class="options">';
+    q.opts.forEach(function(opt, i) {
+      html += '<button onclick="answerDomestic(' + q.id + ',' + i + ',this)">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<div class="feedback"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function answerDomestic(qId, optIdx, btn) {
+  var q = domesticQuestions.find(function(x) { return x.id === qId; });
+  domesticAnswers[qId] = optIdx;
+  var container = document.getElementById('dq' + qId);
+  var buttons = container.querySelectorAll('.options button');
+  buttons.forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  container.classList.add('answered');
+  container.querySelector('.feedback').textContent = q.tips[optIdx];
+  domesticScore = 0;
+  var total = 0;
+  domesticQuestions.forEach(function(qq) {
+    if (domesticAnswers[qq.id] !== undefined) {
+      domesticScore += qq.weights[domesticAnswers[qq.id]];
+      total++;
+    }
+  });
+  document.getElementById('domesticProgress').style.width = (total / domesticQuestions.length * 100) + '%';
+  if (total === domesticQuestions.length) showDomesticResults();
+}
+
+function showDomesticResults() {
+  var panel = document.getElementById('domesticResults');
+  var banner = document.getElementById('domesticBanner');
+  var level = document.getElementById('domesticLevel');
+  var scoreEl = document.getElementById('domesticScore');
+  var summary = document.getElementById('domesticSummary');
+  var checklist = document.getElementById('domesticChecklist');
+  panel.classList.add('show');
+  panel.style.display = 'block';
+
+  if (domesticAnswers[1] === 2) {
+    banner.className = 'result-banner success';
+    level.textContent = '低风险 -- 暂不在规范范围';
+    scoreEl.textContent = '0/' + maxDomestic;
+    summary.textContent = '你未对外发布AI生成内容，暂不适用"智能信息服务"标识要求。如未来开展AI内容业务，请回来复查。';
+    checklist.innerHTML = '<div class="action-item"><div class="icon">&#x1F7E2;</div><div><strong>保持：</strong>持续关注《互联网信息服务管理办法》正式落地</div></div>';
+    panel.scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  var html = '';
+  if (domesticScore >= 11) {
+    banner.className = 'result-banner danger';
+    level.textContent = '高风险 -- 紧急整改';
+    scoreEl.textContent = domesticScore + '/' + maxDomestic;
+    summary.textContent = '你存在明确的国内AI标识合规缺口，8月2日（办法征求意见截止）前须完成整改，避免监管风险。';
+    html += '<div class="action-item"><div class="icon">&#x1F534;</div><div><strong>立即：</strong>为所有AI产出内容添加"AI生成"显式标识</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F534;</div><div><strong>立即：</strong>停用任何去水印/隐标识工具，建立出厂即带标识规范</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F534;</div><div><strong>本周：</strong>在官网/产品页补充"AI技术说明"区块（原理/机制/训练数据）</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F534;</div><div><strong>本周：</strong>如提供算法推荐，加入"关闭个性化推荐"开关</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F534;</div><div><strong>建议：</strong>联系衡安AI获取国内+欧盟双轨合规报告模板</div></div>';
+  } else if (domesticScore >= 5) {
+    banner.className = 'result-banner warning';
+    level.textContent = '中风险 -- 需补全';
+    scoreEl.textContent = domesticScore + '/' + maxDomestic;
+    summary.textContent = '你有部分国内合规缺口，建议在8月2日前补全标识与公示要求。';
+    html += '<div class="action-item"><div class="icon">&#x1F7E1;</div><div><strong>确认：</strong>AI内容是否已全部带可见标识</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F7E1;</div><div><strong>补全：</strong>补充机器可读元数据（可复用EU版C2PA思路）</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F7E1;</div><div><strong>公示：</strong>补全AI技术原理与训练数据来源说明</div></div>';
+  } else {
+    banner.className = 'result-banner success';
+    level.textContent = '低风险 -- 保持';
+    scoreEl.textContent = domesticScore + '/' + maxDomestic;
+    summary.textContent = '你的国内AI标识合规基础较好。建议保持并关注办法正式落地后的细则。';
+    html += '<div class="action-item"><div class="icon">&#x1F7E2;</div><div><strong>保持：</strong>持续为AI内容添加标识</div></div>';
+    html += '<div class="action-item"><div class="icon">&#x1F7E2;</div><div><strong>关注：</strong>跟踪《互联网信息服务管理办法》正式版本</div></div>';
+  }
+  checklist.innerHTML = html;
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetDomestic() {
+  domesticAnswers = {};
+  domesticScore = 0;
+  document.getElementById('domesticResults').classList.remove('show');
+  document.getElementById('domesticResults').style.display = 'none';
+  document.getElementById('domesticProgress').style.width = '0%';
+  renderDomesticQuestions();
+  document.getElementById('tab-domestic').scrollIntoView({ behavior: 'smooth' });
+}
 
 // Tab Navigation
 function switchTab(tab) {
@@ -1123,9 +1271,11 @@ function switchTab(tab) {
   });
   document.getElementById('tab-quiz').style.display = tab === 'quiz' ? 'block' : 'none';
   document.getElementById('tab-image').style.display = tab === 'image' ? 'block' : 'none';
+  document.getElementById('tab-domestic').style.display = tab === 'domestic' ? 'block' : 'none';
   document.getElementById('progressBar').style.display = tab === 'quiz' ? '' : 'none';
   document.getElementById('results').style.display = 'none';
   document.getElementById('image-results').style.display = 'none';
+  document.getElementById('domesticResults').style.display = 'none';
   document.getElementById('upload-area').style.display = '';
 }
 
